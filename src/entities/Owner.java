@@ -26,11 +26,6 @@ public class Owner {
     public Owner() {
     }
 
-    public Owner(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     public Owner(String firstName, String lastName, String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
