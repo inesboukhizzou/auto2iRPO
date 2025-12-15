@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "Owner")
@@ -22,6 +23,9 @@ public class Owner {
     @Column(name = "email", length = 100)
     private String email;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vehicle> vehicles = new ArrayList<>();
+
     // Constructors
     public Owner() {
     }
@@ -32,12 +36,12 @@ public class Owner {
         this.lastName = lastName;
     }
 
-
-    public Owner(String firstName, String lastName, String phoneNumber, String email) {
+    public Owner(String firstName, String lastName, String phoneNumber, String email, List<Vehicle> vehicles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.vehicles = vehicles;
     }
 
     // Getters and Setters
@@ -81,6 +85,28 @@ public class Owner {
         this.email = email;
     }
 
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
+    }
+
+    // Helper method to add a vehicle
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+        vehicle.setOwner(this);
+    }
+
+    // Helper method to remove a vehicle
+    public void removeVehicle(Vehicle vehicle) {
+        vehicles.remove(vehicle);
+        vehicle.setOwner(null);
+    }
+
+    // toString
+
     @Override
     public String toString() {
         return "Owner{" +
@@ -89,6 +115,7 @@ public class Owner {
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
+                ", vehicles=" + vehicles +
                 '}';
     }
 }

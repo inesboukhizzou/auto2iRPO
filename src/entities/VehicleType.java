@@ -1,6 +1,8 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="VehicleType")
@@ -23,6 +25,9 @@ public class VehicleType {
     private int numberOfSeats;
     @Column(name = "power", nullable = false, length = 100)
     private int power;
+
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vehicle> vehicles = new ArrayList<>();
 
     public VehicleType(){
     }
@@ -101,6 +106,26 @@ public class VehicleType {
         this.power = power;
     }
 
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
+    }
+
+    // Helper method to add a vehicle
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+        vehicle.setVehicleType(this);
+    }
+
+    // Helper method to remove a vehicle
+    public void removeVehicle(Vehicle vehicle) {
+        vehicles.remove(vehicle);
+        vehicle.setVehicleType(null);
+    }
+
     // toString
 
 
@@ -115,6 +140,7 @@ public class VehicleType {
                 ", numberOfDoors=" + numberOfDoors +
                 ", numberOfSeats=" + numberOfSeats +
                 ", power=" + power +
+                ", vehicles=" + vehicles +
                 '}';
     }
 }
