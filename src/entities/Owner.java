@@ -26,7 +26,6 @@ public class Owner {
     public Owner() {
     }
 
-
     // if we want to add a new client without necessarily adding their contact info
     public Owner(String firstName, String lastName) {
         this.firstName = firstName;
