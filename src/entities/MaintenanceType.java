@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "MaintenanceType")
-public class MaintenanceType {
+public class MaintenanceType extends InterventionType{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,6 +11,12 @@ public class Intervention {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "vehicleId", nullable = false)
+    private Vehicle vehicle;
+    @ManyToOne
+    @JoinColumn(name = "interventionTypeId", nullable = false)
+    private InterventionType interventionType;
     @Temporal(TemporalType.DATE)
     @Column(name = "date", nullable = false, length = 6)
     private Date date;
@@ -24,11 +30,11 @@ public class Intervention {
     public Intervention() {
     }
 
-    public Intervention(Date date, int vehicleMileage, double price) {
+    public Intervention(Vehicle vehicle, Date date, int vehicleMileage, double price) {
+        this.vehicle = vehicle;
         this.date = date;
         this.vehicleMileage = vehicleMileage;
         this.price = price;
-
     }
 
     // Getters and Setters
@@ -65,10 +71,28 @@ public class Intervention {
         this.price = price;
     }
 
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public InterventionType getInterventionType() {
+        return interventionType;
+    }
+
+    public void setInterventionType(InterventionType interventionType) {
+        this.interventionType = interventionType;
+    }
+
     @Override
     public String toString() {
         return "Intervention{" +
                 "id=" + id +
+                ", vehicle=" + vehicle +
+                ", interventionType=" + interventionType +
                 ", date=" + date +
                 ", vehicleMileage=" + vehicleMileage +
                 ", price=" + price +

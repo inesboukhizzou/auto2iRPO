@@ -28,6 +28,13 @@ public class Vehicle {
     @Column(name = "lastMileage", nullable = false, length = 100)
     private int lastMileage;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @Column(name="registrationId")
+    private Registration registration;
+
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Intervention> interventions = new ArrayList<>();
+
     public Vehicle(){
     }
 
@@ -78,6 +85,26 @@ public class Vehicle {
 
     public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
+    }
+
+    public List<Intervention> getInterventions() {
+        return interventions;
+    }
+
+    public void setInterventions(List<Intervention> interventions) {
+        this.interventions = interventions;
+    }
+
+
+    public void addIntervention(Intervention intervention) {
+        interventions.add(intervention);
+        intervention.setVehicle(this);
+    }
+
+    // Helper method to remove a vehicle
+    public void removeIntervention(Intervention intervention) {
+        interventions.remove(intervention);
+        intervention.setVehicle(null);
     }
 
     // toString

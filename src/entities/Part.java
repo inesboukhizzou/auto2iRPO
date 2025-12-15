@@ -10,19 +10,23 @@ public class Part {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
+    @ManyToOne
+    @JoinColumn(name = "interventionTypeId", nullable = false)
+    private InterventionType interventionType;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+
 
     public Part() {
     }
 
-    public Part(String name) {
+    public Part(InterventionType interventionType, String name) {
+        this.interventionType = interventionType;
         this.name = name;
     }
 
-    // getters and setters
+// getters and setters
 
     public Long getId() {
         return id;
@@ -40,10 +44,19 @@ public class Part {
         this.name = name;
     }
 
+    public InterventionType getInterventionType() {
+        return interventionType;
+    }
+
+    public void setInterventionType(InterventionType interventionType) {
+        this.interventionType = interventionType;
+    }
+
     @Override
     public String toString() {
         return "Part{" +
                 "id=" + id +
+                ", interventionType=" + interventionType +
                 ", name='" + name + '\'' +
                 '}';
     }

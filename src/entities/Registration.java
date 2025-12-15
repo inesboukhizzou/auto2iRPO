@@ -19,6 +19,10 @@ public class Registration {
     @Column(name = "part3", length = 2)
     private String part3;
 
+    @OneToOne(mappedBy = "registration")
+    private Vehicle vehicle;
+
+    public Registration(){}
 
     public Registration(String part1, int part2, String part3) {
         this.part1 = part1;
@@ -26,7 +30,7 @@ public class Registration {
         this.part3 = part3;
 
     }
-// Getters and setters
+    // Getters and setters
 
     public Long getId() {
         return id;
