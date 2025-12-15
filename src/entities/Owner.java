@@ -26,15 +26,14 @@ public class Owner {
     public Owner() {
     }
 
-<<<<<<< HEAD
-=======
+
     // if we want to add a new client without necessarily adding their contact info
     public Owner(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
->>>>>>> 683d8e224d505f6c2bcd5a4b4e111dea84929efb
+
     public Owner(String firstName, String lastName, String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
