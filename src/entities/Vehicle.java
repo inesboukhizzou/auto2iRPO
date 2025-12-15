@@ -28,8 +28,8 @@ public class Vehicle {
     @Column(name = "lastMileage", nullable = false, length = 100)
     private int lastMileage;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @Column(name="registrationId")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "registration_id", nullable = false)
     private Registration registration;
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
