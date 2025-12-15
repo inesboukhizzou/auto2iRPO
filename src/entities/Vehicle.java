@@ -4,9 +4,9 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name="Vehicule")
+@Table(name="Vehicle")
 
-public class Vehicule {
+public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,10 +19,10 @@ public class Vehicule {
     @Column(name = "lastMileage", nullable = false, length = 100)
     private int lastMileage;
 
-    public Vehicule(){
+    public Vehicle(){
     }
 
-    public Vehicule(Date dateOfFirstRegistration, int lastMileage){
+    public Vehicle(Date dateOfFirstRegistration, int lastMileage){
         this.dateOfFirstRegistration = dateOfFirstRegistration;
         this.lastMileage=lastMileage;
     }
@@ -55,7 +55,7 @@ public class Vehicule {
 
     @Override
     public String toString() {
-        return "Vehicule{" +
+        return "Vehicle{" +
                 "id=" + id +
                 ", dateOfFirstRegistration=" + dateOfFirstRegistration +
                 ", lastMileage=" + lastMileage +

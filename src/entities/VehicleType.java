@@ -3,8 +3,8 @@ package entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name="VehiculeType")
-public class VehiculeType {
+@Table(name="VehicleType")
+public class VehicleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +24,9 @@ public class VehiculeType {
     @Column(name = "power", nullable = false, length = 100)
     private int power;
 
-    public VehiculeType(){
+    public VehicleType(){
     }
-    public VehiculeType(String brand, String model, String fuelType, String gearbox, int numberOfDoors, int numberOfSeats, int power) {
+    public VehicleType(String brand, String model, String fuelType, String gearbox, int numberOfDoors, int numberOfSeats, int power) {
         this.brand = brand;
         this.model = model;
         this.fuelType = fuelType;
@@ -106,7 +106,7 @@ public class VehiculeType {
 
     @Override
     public String toString() {
-        return "VehiculeType{" +
+        return "VehicleType{" +
                 "id=" + id +
                 ", brand='" + brand + '\'' +
                 ", model='" + model + '\'' +
