@@ -8,11 +8,6 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class VehicleDAO {
-
-    /**
-     * Save a new vehicle to the database
-     * @param vehicle The vehicle to save
-     */
     public void save(Vehicle vehicle) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -30,11 +25,6 @@ public class VehicleDAO {
         }
     }
 
-    /**
-     * Find a vehicle by its ID
-     * @param id The vehicle ID
-     * @return The vehicle or null if not found
-     */
     public Vehicle findById(Long id) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         Vehicle vehicle = null;
@@ -46,11 +36,6 @@ public class VehicleDAO {
         return vehicle;
     }
 
-    /**
-     * Find a vehicle by its registration number
-     * @param registration The full registration (e.g., "AB-123-CD")
-     * @return The vehicle or null if not found
-     */
     public Vehicle findByRegistration(String registration) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         Vehicle vehicle = null;
@@ -88,10 +73,7 @@ public class VehicleDAO {
         return vehicle;
     }
 
-    /**
-     * Find all vehicles
-     * @return List of all vehicles
-     */
+
     public List<Vehicle> findAll() {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<Vehicle> vehicles = null;
@@ -107,11 +89,7 @@ public class VehicleDAO {
         return vehicles;
     }
 
-    /**
-     * Find all vehicles by owner
-     * @param ownerId The owner ID
-     * @return List of vehicles belonging to the owner
-     */
+
     public List<Vehicle> findByOwner(Long ownerId) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<Vehicle> vehicles = null;
@@ -129,11 +107,7 @@ public class VehicleDAO {
         return vehicles;
     }
 
-    /**
-     * Find all vehicles of a specific type
-     * @param vehicleTypeId The vehicle type ID
-     * @return List of vehicles of this type
-     */
+
     public List<Vehicle> findByVehicleType(Long vehicleTypeId) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<Vehicle> vehicles = null;
@@ -150,10 +124,6 @@ public class VehicleDAO {
         return vehicles;
     }
 
-    /**
-     * Update an existing vehicle
-     * @param vehicle The vehicle to update
-     */
     public void update(Vehicle vehicle) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -171,10 +141,7 @@ public class VehicleDAO {
         }
     }
 
-    /**
-     * Delete a vehicle by ID
-     * @param id The vehicle ID
-     */
+
     public void delete(Long id) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -195,10 +162,7 @@ public class VehicleDAO {
         }
     }
 
-    /**
-     * Count total number of vehicles
-     * @return Number of vehicles
-     */
+
     public long count() {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         long count = 0;
