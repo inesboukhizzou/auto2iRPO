@@ -15,10 +15,13 @@ public class PartDAO {
         this.em = em;
     }
 
-
-    public void create(Part part) {
+    public void save(Part part) {
         em.getTransaction().begin();
-        em.persist(part);
+        if (part.getId() == null) {
+            em.persist(part);
+        } else {
+            em.merge(part);
+        }
         em.getTransaction().commit();
     }
 

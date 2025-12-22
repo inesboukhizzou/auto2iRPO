@@ -107,17 +107,23 @@ public class Vehicle {
         intervention.setVehicle(null);
     }
 
-    // toString
+    public Registration getRegistration() {
+        return registration;
+    }
 
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
+
+    // toString
 
     @Override
     public String toString() {
         return "Vehicle{" +
                 "id=" + id +
-                ", owner=" + owner +
-                ", vehicleType=" + vehicleType +
-                ", dateOfFirstRegistration=" + dateOfFirstRegistration +
+                ", registration=" + (registration != null ? registration.getPart1() + registration.getPart2() + registration.getPart3() : null) +
                 ", lastMileage=" + lastMileage +
+                ", dateOfFirstRegistration=" + dateOfFirstRegistration +
                 '}';
     }
 }

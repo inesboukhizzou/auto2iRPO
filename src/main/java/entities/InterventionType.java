@@ -21,6 +21,9 @@ public class InterventionType {
 
     @OneToMany(mappedBy = "interventionType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Part> parts = new ArrayList<>();
+    @OneToMany(mappedBy = "interventionType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pricing> pricing = new ArrayList<>();
+
     public InterventionType() {
     }
 

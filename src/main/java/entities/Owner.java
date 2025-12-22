@@ -115,7 +115,6 @@ public class Owner {
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", vehicles=" + vehicles +
                 '}';
     }
 }

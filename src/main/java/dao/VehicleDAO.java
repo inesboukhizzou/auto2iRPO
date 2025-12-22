@@ -1,6 +1,7 @@
 package dao;
 
 import entities.Vehicle;
+import entities.Registration;
 import utils.JPAUtil;
 
 import jakarta.persistence.EntityManager;
@@ -36,43 +37,30 @@ public class VehicleDAO {
         return vehicle;
     }
 
-    public Vehicle findByRegistration(String registration) {
+    public Vehicle findByRegistration(Registration registration) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        Vehicle vehicle = null;
+        Vehicle vehicle;
+
         try {
-            // Parse registration string (format: part1-part2-part3)
-            String[] parts = registration.split("-");
-            if (parts.length != 3) {
-                throw new IllegalArgumentException("Invalid registration format. Expected: XXX-999-XXX");
-            }
-
-            String part1 = parts[0];
-            int part2 = Integer.parseInt(parts[1]);
-            String part3 = parts[2];
-
             TypedQuery<Vehicle> query = em.createQuery(
-                    "SELECT v FROM Vehicle v WHERE v.registration.part1 = :part1 " +
-                            "AND v.registration.part2 = :part2 AND v.registration.part3 = :part3",
+                    "SELECT v FROM Vehicle v " +
+                            "WHERE v.registration.part1 = :part1 " +
+                            "AND v.registration.part2 = :part2 " +
+                            "AND v.registration.part3 = :part3",
                     Vehicle.class
             );
-            query.setParameter("part1", part1);
-            query.setParameter("part2", part2);
-            query.setParameter("part3", part3);
 
-            List<Vehicle> results = query.getResultList();
-            if (!results.isEmpty()) {
-                vehicle = results.get(0);
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid registration format: " + registration);
-        } catch (Exception e) {
-            e.printStackTrace();
+            query.setParameter("part1", registration.getPart1());
+            query.setParameter("part2", registration.getPart2());
+            query.setParameter("part3", registration.getPart3());
+
+            vehicle = query.getResultStream().findFirst().orElse(null);
         } finally {
             em.close();
         }
+
         return vehicle;
     }
-
 
     public List<Vehicle> findAll() {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();

@@ -91,11 +91,11 @@ public class Intervention {
     public String toString() {
         return "Intervention{" +
                 "id=" + id +
-                ", vehicle=" + vehicle +
-                ", interventionType=" + interventionType +
                 ", date=" + date +
                 ", vehicleMileage=" + vehicleMileage +
                 ", price=" + price +
+                ", vehicleId=" + (vehicle != null ? vehicle.getId() : null) +
+                ", interventionTypeId=" + (interventionType != null ? interventionType.getId() : null) +
                 '}';
     }
 }

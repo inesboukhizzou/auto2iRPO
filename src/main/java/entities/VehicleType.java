@@ -28,6 +28,8 @@ public class VehicleType {
 
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vehicle> vehicles = new ArrayList<>();
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pricing> pricings = new ArrayList<>();
 
     public VehicleType(){
     }
@@ -126,6 +128,24 @@ public class VehicleType {
         vehicle.setVehicleType(null);
     }
 
+    public List<Pricing> getPricings() {
+        return pricings;
+    }
+
+    public void setPricings(List<Pricing> pricings) {
+        this.pricings = pricings;
+    }
+    // Helper method to add a vehicle
+    public void addPricing(Pricing pricing) {
+        pricings.add(pricing);
+        pricing.setVehicleType(this);
+    }
+
+    // Helper method to remove a vehicle
+    public void removePricing(Pricing pricing) {
+        pricings.remove(pricing);
+        pricing.setVehicleType(null);
+    }
     // toString
 
 
