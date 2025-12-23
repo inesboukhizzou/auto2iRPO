@@ -1,37 +1,26 @@
 package ui;
-import ui.panels.*;
-import ui.components.SideMenu;
-import ui.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
+import ui.panels.*;
+import ui.components.SideMenu;
 
 public class MainFrame extends JFrame {
-
-    private CardLayout cardLayout;
-    private JPanel contentPanel;
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel contentPanel = new JPanel(cardLayout);
 
     public MainFrame() {
         setTitle("Auto2i - Garage Management System");
-        setSize(1200, 800);
+        setSize(1280, 832);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        cardLayout = new CardLayout();
-        contentPanel = new JPanel(cardLayout);
-
-        // Panels
-        DashboardPanel dashboardPanel = new DashboardPanel();
-        VehiclePanel vehiclePanel = new VehiclePanel();
-        InterventionPanel interventionPanel = new InterventionPanel();
-
-        contentPanel.add(dashboardPanel, "DASHBOARD");
-        contentPanel.add(vehiclePanel, "VEHICLES");
-        contentPanel.add(interventionPanel, "INTERVENTIONS");
+        // Pass layout and panel to VehiclePanel so it can navigate to ADD_VEHICLE
+        contentPanel.add(new DashboardPanel(), "DASHBOARD");
+        contentPanel.add(new VehiclePanel(cardLayout, contentPanel), "VEHICLES");
+        contentPanel.add(new InterventionPanel(), "INTERVENTIONS");
+        contentPanel.add(new AddVehiclePanel(), "ADD_VEHICLE");
 
         SideMenu sideMenu = new SideMenu(cardLayout, contentPanel);
-
         add(sideMenu, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
 

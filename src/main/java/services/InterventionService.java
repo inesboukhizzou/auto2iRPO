@@ -52,24 +52,19 @@ public class InterventionService {
             throw new IllegalArgumentException("currentDate cannot be null");
         }
 
-        LocalDate now = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        // Safely convert the current Date to LocalDate
+        LocalDate now = convertToLocalDate(currentDate);
         List<MaintenanceDue> result = new ArrayList<>();
 
-        // We iterate all vehicles, then use InterventionDAO to fetch interventions for each vehicle.
-        // This avoids relying on lazy collections in the GUI layer.
         List<Vehicle> vehicles = vehicleDAO.findAll();
         for (Vehicle vehicle : vehicles) {
-            if (vehicle == null) {
-                continue;
-            }
+            if (vehicle == null) continue;
 
             int currentMileage = vehicle.getLastMileage();
             List<Intervention> interventions = interventionDAO.findByVehicle(vehicle);
-            if (interventions == null || interventions.isEmpty()) {
-                continue;
-            }
 
-            // Keep only the most recent intervention for each intervention type (by date).
+            if (interventions == null || interventions.isEmpty()) continue;
+
             Map<Long, Intervention> lastByTypeId = new HashMap<>();
             for (Intervention intervention : interventions) {
                 if (intervention == null || intervention.getInterventionType() == null || intervention.getDate() == null) {
@@ -77,9 +72,6 @@ public class InterventionService {
                 }
                 InterventionType type = intervention.getInterventionType();
                 Long typeId = type.getId();
-                if (typeId == null) {
-                    continue;
-                }
 
                 Intervention currentLast = lastByTypeId.get(typeId);
                 if (currentLast == null || intervention.getDate().after(currentLast.getDate())) {
@@ -90,16 +82,12 @@ public class InterventionService {
             for (Intervention lastIntervention : lastByTypeId.values()) {
                 InterventionType type = lastIntervention.getInterventionType();
 
-                // Only MaintenanceType (subclass) has maxDuration/maxMileage.
-                if (!(type instanceof MaintenanceType)) {
-                    continue;
-                }
+                if (!(type instanceof MaintenanceType)) continue;
+
                 MaintenanceType maintenanceType = (MaintenanceType) type;
 
-                LocalDate lastDate = lastIntervention.getDate()
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate();
+                // FIX: Use the safe conversion method to avoid UnsupportedOperationException
+                LocalDate lastDate = convertToLocalDate(lastIntervention.getDate());
 
                 LocalDate dateLimit = lastDate.plusDays(maintenanceType.getMaxDuration());
                 int mileageLimit = lastIntervention.getVehicleMileage() + maintenanceType.getMaxMileage();
@@ -111,11 +99,21 @@ public class InterventionService {
             }
         }
 
-        // Sort by urgency: the closest constraint first (negative means overdue => most urgent).
         result.sort(Comparator.comparingLong(MaintenanceDue::getUrgencyScore));
         return result;
     }
 
+    /**
+     * Helper method to safely convert java.util.Date or java.sql.Date to LocalDate.
+     */
+    private LocalDate convertToLocalDate(Date dateToConvert) {
+        if (dateToConvert instanceof java.sql.Date) {
+            return ((java.sql.Date) dateToConvert).toLocalDate();
+        }
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
     /* ===================== statistics ===================== */
     public double getTotalCostByVehicle(Vehicle vehicle) {
         if (vehicle == null) {
