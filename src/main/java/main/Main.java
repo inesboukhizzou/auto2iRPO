@@ -8,13 +8,21 @@ import services.*;
 import entities.*;
 
 import java.util.Date;
-
+import java.util.List;
+import java.util.logging.*;
 public class Main {
 
     public static void main(String[] args) {
 
-        EntityManagerFactory emf =
-                Persistence.createEntityManagerFactory("auto2iPU");
+        ////////////////LEO///////////////////
+        Logger rootLogger = Logger.getLogger("org.hibernate");
+        rootLogger.setLevel(Level.SEVERE);
+
+        Logger.getLogger("org.hibernate.SQL").setLevel(Level.OFF);
+        Logger.getLogger("org.hibernate.tool.hbm2ddl").setLevel(Level.OFF);
+        ////////////////LEO///////////////////
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("auto2iPU");
         EntityManager em = emf.createEntityManager();
 
         // Services
@@ -31,7 +39,6 @@ public class Main {
         owner.setLastName("Martin");
         owner.setEmail("alice@test.com");
         owner.setPhoneNumber("0612345678");
-
         ownerService.addOwner(owner);
 
         /* ================= VEHICLE TYPE ================= */
@@ -61,35 +68,29 @@ public class Main {
         vehicle.setRegistration(registration);
         vehicle.setDateOfFirstRegistration(new Date());
         vehicle.setLastMileage(120000);
-
         vehicleService.addVehicule(vehicle, owner);
 
         /* ================= INTERVENTION TYPE ================= */
-        InterventionType maintenance = new InterventionType();
-        maintenance.setName("Maintenance");
-        itService.addInterventionType(maintenance);
+        InterventionType maintenanceType = new InterventionType();
+        maintenanceType.setName("Maintenance annuelle");
+        itService.addInterventionType(maintenanceType);
 
         /* ================= INTERVENTION ================= */
         Intervention intervention = new Intervention();
         intervention.setVehicle(vehicle);
-        intervention.setInterventionType(maintenance);
+        intervention.setInterventionType(maintenanceType); // toujours InterventionType
         intervention.setDate(new Date());
         intervention.setVehicleMileage(120000);
         intervention.setPrice(120.0);
-
         interventionService.addIntervention(intervention, vehicle);
 
-        /* ================= DISPLAY ================= */
-        System.out.println("=== HISTORIQUE ===");
-        interventionService.displayHistorique(vehicle)
-                .forEach(System.out::println);
-        System.out.println("=== NEXT MAINTENANCES ===");
+        /* ================= DISPLAY HISTORIQUE ================= */
+        printList(interventionService.displayHistorique(vehicle), "HISTORIQUE");
 
-        interventionService
-                .displayNextMaintenances(new Date())
-                .forEach(System.out::println);
-        System.out.println("=== END TEST ===");
+        /* ================= DISPLAY NEXT MAINTENANCES ================= */
+        printList(interventionService.displayNextMaintenances(), "NEXT MAINTENANCES");
 
+        /* ================= SEARCH VEHICLE BY REGISTRATION ================= */
         System.out.println("=== SEARCH VEHICLE BY REGISTRATION ===");
         Vehicle foundVehicle = vehicleService.searchVehicule(registration);
         if (foundVehicle != null) {
@@ -98,7 +99,17 @@ public class Main {
             System.out.println("Vehicle not found.");
         }
 
+        System.out.println("=== END TEST ===");
+
         em.close();
         emf.close();
+    }
+
+    public static <T> void printList(List<T> list, String title) {
+        System.out.println("=== " + title + " ===");
+        for (T item : list) {
+            System.out.println(item);
+        }
+        System.out.println("===================");
     }
 }

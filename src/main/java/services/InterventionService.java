@@ -7,6 +7,7 @@ import entities.InterventionType;
 import entities.MaintenanceType;
 import entities.Vehicle;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.Math.abs;
 
 public class InterventionService {
 
@@ -47,61 +50,66 @@ public class InterventionService {
     }
 
     /* ===================== displayNextMaintenances ===================== */
-    public List<MaintenanceDue> displayNextMaintenances(Date currentDate) {
-        if (currentDate == null) {
-            throw new IllegalArgumentException("currentDate cannot be null");
-        }
-
-        // Safely convert the current Date to LocalDate
-        LocalDate now = convertToLocalDate(currentDate);
+    public List<MaintenanceDue> displayNextMaintenances() {
+        Instant now = Instant.now();
         List<MaintenanceDue> result = new ArrayList<>();
 
-        List<Vehicle> vehicles = vehicleDAO.findAll();
-        for (Vehicle vehicle : vehicles) {
+        for (Vehicle vehicle : vehicleDAO.findAll()) {
             if (vehicle == null) continue;
 
             int currentMileage = vehicle.getLastMileage();
             List<Intervention> interventions = interventionDAO.findByVehicle(vehicle);
-
             if (interventions == null || interventions.isEmpty()) continue;
 
-            Map<Long, Intervention> lastByTypeId = new HashMap<>();
-            for (Intervention intervention : interventions) {
-                if (intervention == null || intervention.getInterventionType() == null || intervention.getDate() == null) {
-                    continue;
-                }
-                InterventionType type = intervention.getInterventionType();
-                Long typeId = type.getId();
+            Map<Long, Intervention> lastByType = getLastInterventionsByType(interventions);
 
-                Intervention currentLast = lastByTypeId.get(typeId);
-                if (currentLast == null || intervention.getDate().after(currentLast.getDate())) {
-                    lastByTypeId.put(typeId, intervention);
-                }
-            }
+            for (Intervention last : lastByType.values()) {
+                if (!(last.getInterventionType() instanceof MaintenanceType)) continue;
 
-            for (Intervention lastIntervention : lastByTypeId.values()) {
-                InterventionType type = lastIntervention.getInterventionType();
+                MaintenanceType mt = (MaintenanceType) last.getInterventionType();
 
-                if (!(type instanceof MaintenanceType)) continue;
-
-                MaintenanceType maintenanceType = (MaintenanceType) type;
-
-                // FIX: Use the safe conversion method to avoid UnsupportedOperationException
-                LocalDate lastDate = convertToLocalDate(lastIntervention.getDate());
-
-                LocalDate dateLimit = lastDate.plusDays(maintenanceType.getMaxDuration());
-                int mileageLimit = lastIntervention.getVehicleMileage() + maintenanceType.getMaxMileage();
-
+                Instant dateLimit = computeDateLimit(last, mt);
                 long daysRemaining = ChronoUnit.DAYS.between(now, dateLimit);
-                int kmRemaining = mileageLimit - currentMileage;
 
-                result.add(new MaintenanceDue(vehicle, type, daysRemaining, kmRemaining));
+                int kmRemaining = computeKmRemaining(last, currentMileage, mt);
+
+                result.add(new MaintenanceDue(vehicle, mt, daysRemaining, kmRemaining));
             }
         }
 
         result.sort(Comparator.comparingLong(MaintenanceDue::getUrgencyScore));
         return result;
     }
+
+    private Map<Long, Intervention> getLastInterventionsByType(List<Intervention> interventions) {
+        Map<Long, Intervention> lastByType = new HashMap<>();
+
+        for (Intervention i : interventions) {
+            if (i == null || i.getInterventionType() == null || i.getDate() == null) continue;
+
+            Long typeId = i.getInterventionType().getId();
+            lastByType.merge(
+                    typeId,
+                    i,
+                    (oldI, newI) -> newI.getDate().after(oldI.getDate()) ? newI : oldI
+            );
+        }
+        return lastByType;
+    }
+
+    private Instant computeDateLimit(Intervention last, MaintenanceType mt) {
+        long lastMillis = last.getDate().getTime();
+        long durationMillis = mt.getMaxDuration() * 60L * 1000L; // minutes → ms
+        return Instant.ofEpochMilli(lastMillis + durationMillis);
+    }
+
+    private int computeKmRemaining(Intervention last, int currentMileage, MaintenanceType mt) {
+        int mileageLimit = last.getVehicleMileage() + mt.getMaxMileage();
+        return mileageLimit - currentMileage;
+    }
+
+
+
 
     /**
      * Helper method to safely convert java.util.Date or java.sql.Date to LocalDate.
