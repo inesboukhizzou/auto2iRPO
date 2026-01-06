@@ -229,9 +229,7 @@ public class Main {
         PriceService priceService = new PriceService();
 
         try {
-            // --- ÉTAPE 1 : Récupération d'un véhicule existant ---
-            // ⚠️ CHANGEZ L'ID ICI si le véhicule n°1 n'existe pas dans votre BDD
-            Long vehicleIdToFind = 1L;
+            Long vehicleIdToFind = 3L;
 
             System.out.println("Recherche du véhicule ID : " + vehicleIdToFind + "...");
             Vehicle existingVehicle = vehicleDAO.findById(vehicleIdToFind);
@@ -239,10 +237,9 @@ public class Main {
             if (existingVehicle == null) {
                 System.err.println("❌ ERREUR : Aucun véhicule trouvé avec l'ID " + vehicleIdToFind);
                 System.err.println("Veuillez vérifier votre base de données et changer l'ID dans le code.");
-                return; // On arrête le programme ici
+                return;
             }
 
-            // Affichage pour vérification
             String modelType = "Inconnu";
             if (existingVehicle.getVehicleType() != null) {
                 modelType = existingVehicle.getVehicleType().getModel();
@@ -251,29 +248,28 @@ public class Main {
             System.out.println("   Type détecté : " + modelType);
 
 
-            // --- ÉTAPE 2 : Création d'une nouvelle Intervention pour ce véhicule ---
             System.out.println("\nCréation de l'intervention...");
-            Intervention Intervention = new Intervention();
-            intervention.setDate(new Date());
-            intervention.setPrice(100.0); // Prix de base fixe pour faciliter le calcul mental
+            Intervention intervention3 = new Intervention();
+            intervention3.setInterventionType(interventionType);
+            intervention3.setDate(new Date(124, 8, 1));
+            intervention3.setPrice(150.0);
+            intervention3.setVehicleMileage(46000);
+            intervention3.setVehicle(existingVehicle);
 
-            // C'est ici qu'on fait le lien avec le véhicule existant
-            intervention.setVehicle(existingVehicle);
 
-            // Sauvegarde de l'intervention en base
-            interventionDAO.save(intervention);
-            System.out.println("-> Intervention sauvegardée (ID : " + intervention.getId() + ")");
+            interventionDAO.save(intervention3);
+            System.out.println("-> Intervention sauvegardée (ID : " + intervention3.getId() + ")");
 
 
             // --- ÉTAPE 3 : Test du Calcul de Prix ---
             System.out.println("\nCalcul du prix final...");
 
             // Appel du service (qui va lire le type du véhicule via l'intervention)
-            double finalPrice = priceService.FinalPrice(intervention);
+            double finalPrice = priceService.FinalPrice(intervention3);
 
             // Petit récapitulatif visuel
             System.out.println("\n--- RÉSULTAT DU TEST ---");
-            System.out.println("Prix de base : " + intervention.getPrice() + " €");
+            System.out.println("Prix de base : " + intervention3.getPrice() + " €");
             System.out.println("Type véhicule : " + modelType);
             System.out.println("Prix calculé : " + finalPrice + " €");
 
