@@ -1,50 +1,50 @@
 package dao;
-import entities.Registration;
-import entities.Vehicle;
-import entities.VehicleType;
+
+import entities.MaintenanceType;
+import entities.InterventionType;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import utils.JPAUtil;
-import jakarta.persistence.EntityManager;
-import java.util.*;
 
-public class VehicleDAO {
+import java.util.List;
 
-    public void save(Vehicle vehicle) {
+public class MaintenanceTypeDAO {
+
+    public void create(MaintenanceType maintenanceType){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
             et.begin();
-            em.persist(vehicle);
+            em.persist(maintenanceType);
             et.commit();
         }
-        catch(RuntimeException re){
+        catch(RuntimeException e){
             if(et.isActive()){
                 et.rollback();
             }
-            throw re;
-        }
-        finally {
-            em.close();
-        }
-    }
-
-    // finds vehicle by Id
-    public Vehicle findById(Long id){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try{
-            return em.find(Vehicle.class, id);
+            throw e;
         }
         finally{
             em.close();
         }
     }
 
-    public List<Vehicle> findAll(){
+    public MaintenanceType findById(Long id){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            return em.find(MaintenanceType.class, id);
+        }
+        finally{
+            em.close();
+        }
+    }
+
+    public List<MaintenanceType> findAll(){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
             return em.createQuery(
-                    "SELECT v FROM Vehicle v",
-                    Vehicle.class
+                    "SELECT m FROM MaintenanceType m",
+                    MaintenanceType.class
             ).getResultList();
         }
         finally{
@@ -52,14 +52,14 @@ public class VehicleDAO {
         }
     }
 
-    public List<Vehicle> findByVehicleType(VehicleType vehicleType){
+    public List<MaintenanceType> findByInterventionType(InterventionType interventionType){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
             return em.createQuery(
-                    "SELECT v FROM Vehicle v WHERE v.vehicleType = :vehicleType",
-                    Vehicle.class
+                    "SELECT m FROM MaintenanceType m WHERE m.interventionType = :interventionType",
+                    MaintenanceType.class
             )
-            .setParameter("vehicleType", vehicleType)
+            .setParameter("interventionType", interventionType)
             .getResultList();
         }
         finally{
@@ -67,64 +67,62 @@ public class VehicleDAO {
         }
     }
 
-    /*TO DO : WRITE FIND VEHICLE BY REGISTRATION */
+    public void setMaxDuration(Long id, int maxDuration){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction et = em.getTransaction();
+        try{
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
+            et.begin();
+            maintenanceType.setMaxDuration(maxDuration);
+            et.commit();
+        }
+        catch(RuntimeException e){
+            if(et.isActive()){
+                et.rollback();
+            }
+            throw e;
+        }
+        finally{
+            em.close();
+        }
+    }
+
+    public void setMaxMileage(Long id, int maxMileage){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction et = em.getTransaction();
+        try{
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
+            et.begin();
+            maintenanceType.setMaxMileage(maxMileage);
+            et.commit();
+        }
+        catch(RuntimeException e){
+            if(et.isActive()){
+                et.rollback();
+            }
+            throw e;
+        }
+        finally{
+            em.close();
+        }
+    }
 
     public void remove(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Vehicle vehicle = em.find(Vehicle.class, id);
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
             et.begin();
-            em.remove(vehicle);
+            em.remove(maintenanceType);
             et.commit();
         }
-        catch(RuntimeException re){
+        catch(RuntimeException e){
             if(et.isActive()){
                 et.rollback();
             }
-            throw re;
+            throw e;
         }
-        finally {
-            em.close();
-        }
-    }
-
-    public void setDateRegistration(Long id, Date dateOfFirstRegistration){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try{
-            Vehicle vehicle = em.find(Vehicle.class,id);
-            et.begin();
-            vehicle.setDateOfFirstRegistration(dateOfFirstRegistration);
-            et.commit();
-        }
-        catch(RuntimeException re){
-            if(et.isActive()){
-                et.rollback();
-            }
-            throw re;
-        }
-        finally {
-            em.close();
-        }
-    }
-
-    public void setLastMileage(Long id, int lastMileage){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try{
-            Vehicle vehicle = em.find(Vehicle.class,id);
-            et.begin();
-            vehicle.setLastMileage(lastMileage);
-            et.commit();
-        }
-        catch(RuntimeException re){
-            if(et.isActive()){
-                et.rollback();
-            }
-            throw re;
-        }
-        finally {
+        finally{
             em.close();
         }
     }
