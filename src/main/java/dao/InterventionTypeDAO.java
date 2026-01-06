@@ -9,7 +9,7 @@ import java.util.*;
 
 public class InterventionTypeDAO {
 
-    public void save(InterventionType interventionType) {
+    public void create(InterventionType interventionType) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{

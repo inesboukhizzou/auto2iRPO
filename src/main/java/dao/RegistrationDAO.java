@@ -8,7 +8,7 @@ import utils.JPAUtil;
 import java.util.List;
 
 public class RegistrationDAO {
-    public void save(Registration registration){
+    public void create(Registration registration){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{

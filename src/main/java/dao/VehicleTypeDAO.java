@@ -8,7 +8,7 @@ import java.util.*;
 
 public class VehicleTypeDAO {
 
-    public void save(VehicleType vehicleType) {
+    public void create(VehicleType vehicleType) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{

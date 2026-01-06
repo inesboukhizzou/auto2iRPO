@@ -9,7 +9,7 @@ import java.util.*;
 
 public class OwnerDAO {
 
-    public void save(Owner owner) {
+    public void create(Owner owner) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
