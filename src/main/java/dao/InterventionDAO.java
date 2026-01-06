@@ -2,6 +2,7 @@ package dao;
 
 import entities.Intervention;
 import entities.InterventionType;
+import entities.Vehicle;
 import jakarta.persistence.EntityTransaction;
 import utils.JPAUtil;
 import jakarta.persistence.EntityManager;
@@ -136,4 +137,33 @@ public class InterventionDAO {
         }
     }
 
+    public List<Intervention> findByVehicle(Vehicle vehicle){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            return em.createQuery(
+                    "SELECT i FROM Intervention i WHERE i.vehicle = :vehicle",
+                    Intervention.class
+            )
+            .setParameter("vehicle", vehicle)
+            .getResultList();
+        }
+        finally{
+            em.close();
+        }
+    }
+
+    public List<Intervention> findByInterventionType(InterventionType interventionType){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            return em.createQuery(
+                    "SELECT i FROM Intervention i WHERE i.interventionType = :interventionType",
+                    Intervention.class
+            )
+            .setParameter("interventionType", interventionType)
+            .getResultList();
+        }
+        finally{
+            em.close();
+        }
+    }
 }
