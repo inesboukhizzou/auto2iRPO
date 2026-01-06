@@ -10,8 +10,6 @@ public class MaintenanceType extends InterventionType{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     @Column(name = "maxMileage", nullable = false, length = 100)
     private int maxMileage;
 
