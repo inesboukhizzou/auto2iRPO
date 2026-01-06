@@ -1,20 +1,20 @@
 package dao;
 
 import entities.Intervention;
-import entities.Owner;
-import jakarta.persistence.EntityManager;
+import entities.InterventionType;
 import jakarta.persistence.EntityTransaction;
 import utils.JPAUtil;
+import jakarta.persistence.EntityManager;
 import java.util.*;
 
-public class OwnerDAO {
+public class InterventionDAO {
 
-    public void save(Owner owner) {
+    public void save(Intervention intervention) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
             et.begin();
-            em.persist(owner);
+            em.persist(intervention);
             et.commit();
         }
         catch(RuntimeException re){
@@ -29,10 +29,10 @@ public class OwnerDAO {
     }
 
 
-    public Owner findById(Long id){
+    public Intervention findById(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
-            return em.find(Owner.class, id);
+            return em.find(Intervention.class, id);
         }
         finally{
             em.close();
@@ -41,13 +41,13 @@ public class OwnerDAO {
 
 
 
-    public void removeOwner(Long id){
+    public void removeIntervention(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            Intervention intervention = em.find(Intervention.class, id);
             et.begin();
-            em.remove(owner);
+            em.remove(intervention);
             et.commit();
         }
         catch(RuntimeException re){
@@ -61,15 +61,15 @@ public class OwnerDAO {
         }
     }
 
-    // --- Méthodes de mise à jour spécifiques ---
 
-    public void setEmail(Long id, String email){
+    public void setInterventionDate(Long id, Date date){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            Intervention intervention = em.find(Intervention.class, id);
             et.begin();
-            owner.setEmail(email);
+            // À ADAPTER : Vérifiez le nom du setter dans votre entité Intervention
+            intervention.setDate(date);
             et.commit();
         }
         catch(RuntimeException re){
@@ -83,13 +83,14 @@ public class OwnerDAO {
         }
     }
 
-    public void setFirstName(Long id, String firstName){
+
+    public void setDate(Long id, Date date){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            Intervention intervention = em.find(Intervention.class, id);
             et.begin();
-            owner.setFirstName(firstName);
+            intervention.setDate(date);
             et.commit();
         }
         catch(RuntimeException re){
@@ -103,13 +104,13 @@ public class OwnerDAO {
         }
     }
 
-    public void setLastName(Long id, String lastName){
+    public void setPrice(Long id, double Price){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            Intervention intervention = em.find(Intervention.class, id);
             et.begin();
-            owner.setLastName(lastName);
+            intervention.setPrice(Price);
             et.commit();
         }
         catch(RuntimeException re){
@@ -122,36 +123,17 @@ public class OwnerDAO {
             em.close();
         }
     }
-
-    public void setPhoneNumber(Long id, String phoneNumber){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try{
-            Owner owner = em.find(Owner.class, id);
-            et.begin();
-            owner.setPhoneNumber(phoneNumber);
-            et.commit();
-        }
-        catch(RuntimeException re){
-            if(et.isActive()){
-                et.rollback();
-            }
-            throw re;
-        }
-        finally {
-            em.close();
-        }
-    }
-    public List<Owner> findAll(){
+    public List<Intervention> findAll(){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
             return em.createQuery(
-                    "SELECT r FROM Owner r",
-                    Owner.class
+                    "SELECT r FROM Intervention r",
+                    Intervention.class
             ).getResultList();
         }
         finally{
             em.close();
         }
     }
+
 }

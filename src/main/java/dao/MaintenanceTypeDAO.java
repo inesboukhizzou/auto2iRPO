@@ -1,20 +1,19 @@
 package dao;
 
-import entities.Intervention;
-import entities.Owner;
+import entities.MaintenanceType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import utils.JPAUtil;
 import java.util.*;
 
-public class OwnerDAO {
+public class MaintenanceTypeDAO {
 
-    public void save(Owner owner) {
+    public void save(MaintenanceType maintenanceType) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
             et.begin();
-            em.persist(owner);
+            em.persist(maintenanceType);
             et.commit();
         }
         catch(RuntimeException re){
@@ -29,10 +28,10 @@ public class OwnerDAO {
     }
 
 
-    public Owner findById(Long id){
+    public MaintenanceType findById(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
-            return em.find(Owner.class, id);
+            return em.find(MaintenanceType.class, id);
         }
         finally{
             em.close();
@@ -41,13 +40,13 @@ public class OwnerDAO {
 
 
 
-    public void removeOwner(Long id){
+    public void removeMaintenanceType(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
             et.begin();
-            em.remove(owner);
+            em.remove(maintenanceType);
             et.commit();
         }
         catch(RuntimeException re){
@@ -61,15 +60,14 @@ public class OwnerDAO {
         }
     }
 
-    // --- Méthodes de mise à jour spécifiques ---
 
-    public void setEmail(Long id, String email){
+    public void setMaxDuration(Long id, int maxDuration){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
             et.begin();
-            owner.setEmail(email);
+            maintenanceType.setMaxDuration(maxDuration);
             et.commit();
         }
         catch(RuntimeException re){
@@ -83,13 +81,14 @@ public class OwnerDAO {
         }
     }
 
-    public void setFirstName(Long id, String firstName){
+
+    public void setMaxMileage(Long id, int maxMileage){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try{
-            Owner owner = em.find(Owner.class, id);
+            MaintenanceType maintenanceType = em.find(MaintenanceType.class, id);
             et.begin();
-            owner.setFirstName(firstName);
+            maintenanceType.setMaxMileage(maxMileage);
             et.commit();
         }
         catch(RuntimeException re){
@@ -103,51 +102,12 @@ public class OwnerDAO {
         }
     }
 
-    public void setLastName(Long id, String lastName){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try{
-            Owner owner = em.find(Owner.class, id);
-            et.begin();
-            owner.setLastName(lastName);
-            et.commit();
-        }
-        catch(RuntimeException re){
-            if(et.isActive()){
-                et.rollback();
-            }
-            throw re;
-        }
-        finally {
-            em.close();
-        }
-    }
-
-    public void setPhoneNumber(Long id, String phoneNumber){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try{
-            Owner owner = em.find(Owner.class, id);
-            et.begin();
-            owner.setPhoneNumber(phoneNumber);
-            et.commit();
-        }
-        catch(RuntimeException re){
-            if(et.isActive()){
-                et.rollback();
-            }
-            throw re;
-        }
-        finally {
-            em.close();
-        }
-    }
-    public List<Owner> findAll(){
+    public List<MaintenanceType> findAll(){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
             return em.createQuery(
-                    "SELECT r FROM Owner r",
-                    Owner.class
+                    "SELECT r FROM MaintenanceType r",
+                    MaintenanceType.class
             ).getResultList();
         }
         finally{
