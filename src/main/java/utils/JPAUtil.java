@@ -4,19 +4,17 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class JPAUtil {
-    private static EntityManagerFactory emf = null;
+    private static final EntityManagerFactory emf=Persistence.createEntityManagerFactory("auto2iPU");;
 
-    // Singleton : une seule instance pour toute l'application
+    public JPAUtil() {
+    }
+
     public static EntityManagerFactory getEntityManagerFactory() {
-        if (emf == null) {
-            emf = Persistence.createEntityManagerFactory("auto2iPU");
-            // "Auto2IPU" doit correspondre au nom dans persistence.xml
-        }
         return emf;
     }
 
     public static void close() {
-        if (emf != null && emf.isOpen()) {
+        if (emf.isOpen()) {
             emf.close();
         }
     }
