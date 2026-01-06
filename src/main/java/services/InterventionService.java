@@ -31,7 +31,6 @@ public class InterventionService {
                     interventionDAO.findByVehicle(vehicle);
 
             for (MaintenanceType maintenanceType : maintenanceTypes) {
-
                 // We only plan recurring maintenance interventions
                 if (!isRecurringMaintenance(maintenanceType)) {
                     continue;
@@ -94,6 +93,13 @@ public class InterventionService {
         return result;
     }
 
+    public List<PlannedIntervention> getUrgentInterventions(int limit) {
+        return computePlannedInterventions()
+                .stream()
+                .limit(limit)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     private boolean isRecurringMaintenance(InterventionType type) {
         String name = type.getName().toLowerCase();
 
@@ -150,6 +156,28 @@ public class InterventionService {
 
         public int getPriority() {
             return priority;
+        }
+
+        public Date getPlannedDate() {
+            return plannedDate;
+        }
+
+        public String getInterventionName() {
+            return interventionType.getName();
+        }
+
+        public String getOwnerName() {
+            Owner owner = vehicle.getOwner();
+            return owner.getFirstName() + " " + owner.getLastName();
+        }
+
+        public String getOwnerPhoneNumber() {
+            return vehicle.getOwner().getPhoneNumber();
+        }
+
+        public String getVehicleLabel() {
+            VehicleType vt = vehicle.getVehicleType();
+            return vt.getBrand() + " " + vt.getModel();
         }
 
         @Override

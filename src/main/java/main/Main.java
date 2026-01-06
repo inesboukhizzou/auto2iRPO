@@ -282,6 +282,38 @@ public class Main {
                 System.out.println("ℹ️ Vérifiez si le prix correspond bien à votre tableau de pondération.");
             }
 
+            System.out.println("\n===== TEST computePlannedInterventions =====");
+
+            services.InterventionService interventionService =
+                    new services.InterventionService();
+
+            List<services.InterventionService.PlannedIntervention> plannedInterventions =
+                    interventionService.computePlannedInterventions();
+
+            if (plannedInterventions == null) {
+                throw new AssertionError("❌ ERREUR : la liste des interventions planifiées est null");
+            }
+
+            if (plannedInterventions.isEmpty()) {
+                throw new AssertionError("❌ ERREUR : aucune intervention planifiée trouvée");
+            }
+
+            for (int i = 0; i < plannedInterventions.size() - 1; i++) {
+                int p1 = plannedInterventions.get(i).getPriority();
+                int p2 = plannedInterventions.get(i + 1).getPriority();
+
+                if (p1 < p2) {
+                    throw new AssertionError(
+                            "❌ ERREUR : les interventions ne sont pas triées par priorité décroissante"
+                    );
+                }
+            }
+
+            System.out.println("Interventions planifiées :");
+            plannedInterventions.forEach(System.out::println);
+
+            System.out.println("✅ TEST OK : computePlannedInterventions fonctionne correctement.");
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
