@@ -28,7 +28,7 @@ public class InterventionTypeDAO {
         }
     }
 
-    // Trouve un type d'intervention par ID
+
     public InterventionType findById(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try{
@@ -39,7 +39,7 @@ public class InterventionTypeDAO {
         }
     }
 
-    /* TO DO : WRITE FIND BY NAME IF NEEDED */
+
 
     public void removeInterventionType(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
@@ -61,7 +61,7 @@ public class InterventionTypeDAO {
         }
     }
 
-    // Nouvelle méthode pour modifier uniquement le nom
+
     public void setName(Long id, String name){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();

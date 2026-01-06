@@ -6,6 +6,18 @@ import entities.*;
 import java.util.Date;
 import java.util.List;
 
+import dao.InterventionDAO;
+import dao.VehicleDAO;
+import dao.InterventionTypeDAO; // Assurez-vous d'avoir ce DAO ou un équivalent
+import entities.Intervention;
+import entities.InterventionType;
+import entities.Vehicle;
+import entities.VehicleType;
+import services.PriceService;
+import utils.JPAUtil;
+
+import java.util.Date;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -208,5 +220,86 @@ public class Main {
         System.out.println("===== FIN TEST InterventionDAO =====");
 
         System.out.println("===== FIN DES TESTS =====");
+
+        System.out.println("=== TEST AVEC VÉHICULE EXISTANT ===");
+
+        // 1. Initialisation des DAOs
+        VehicleDAO VehicleDAO = new VehicleDAO();
+        InterventionDAO InterventionDAO = new InterventionDAO();
+        PriceService priceService = new PriceService();
+
+        try {
+            // --- ÉTAPE 1 : Récupération d'un véhicule existant ---
+            // ⚠️ CHANGEZ L'ID ICI si le véhicule n°1 n'existe pas dans votre BDD
+            Long vehicleIdToFind = 1L;
+
+            System.out.println("Recherche du véhicule ID : " + vehicleIdToFind + "...");
+            Vehicle existingVehicle = vehicleDAO.findById(vehicleIdToFind);
+
+            if (existingVehicle == null) {
+                System.err.println("❌ ERREUR : Aucun véhicule trouvé avec l'ID " + vehicleIdToFind);
+                System.err.println("Veuillez vérifier votre base de données et changer l'ID dans le code.");
+                return; // On arrête le programme ici
+            }
+
+            // Affichage pour vérification
+            String modelType = "Inconnu";
+            if (existingVehicle.getVehicleType() != null) {
+                modelType = existingVehicle.getVehicleType().getModel();
+            }
+            System.out.println("✅ Véhicule trouvé : " + existingVehicle.getRegistration());
+            System.out.println("   Type détecté : " + modelType);
+
+
+            // --- ÉTAPE 2 : Création d'une nouvelle Intervention pour ce véhicule ---
+            System.out.println("\nCréation de l'intervention...");
+            Intervention Intervention = new Intervention();
+            intervention.setDate(new Date());
+            intervention.setPrice(100.0); // Prix de base fixe pour faciliter le calcul mental
+
+            // C'est ici qu'on fait le lien avec le véhicule existant
+            intervention.setVehicle(existingVehicle);
+
+            // Sauvegarde de l'intervention en base
+            interventionDAO.save(intervention);
+            System.out.println("-> Intervention sauvegardée (ID : " + intervention.getId() + ")");
+
+
+            // --- ÉTAPE 3 : Test du Calcul de Prix ---
+            System.out.println("\nCalcul du prix final...");
+
+            // Appel du service (qui va lire le type du véhicule via l'intervention)
+            double finalPrice = priceService.FinalPrice(intervention);
+
+            // Petit récapitulatif visuel
+            System.out.println("\n--- RÉSULTAT DU TEST ---");
+            System.out.println("Prix de base : " + intervention.getPrice() + " €");
+            System.out.println("Type véhicule : " + modelType);
+            System.out.println("Prix calculé : " + finalPrice + " €");
+
+            // Vérification logique rapide
+            if (modelType.equalsIgnoreCase("SUV") && finalPrice == 130.0) {
+                System.out.println("✅ OK : Le coefficient SUV (x1.3) a bien fonctionné.");
+            } else if (modelType.equalsIgnoreCase("CITY_CAR") && finalPrice == 100.0) {
+                System.out.println("✅ OK : Le coefficient Citadine (x1.0) a bien fonctionné.");
+            } else {
+                System.out.println("ℹ️ Vérifiez si le prix correspond bien à votre tableau de pondération.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            JPAUtil.getEntityManagerFactory().close();
+        }
     }
+
+
+
+
+
+
+
+
+
+
 }
