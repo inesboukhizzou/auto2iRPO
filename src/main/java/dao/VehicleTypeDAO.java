@@ -50,6 +50,18 @@ public class VehicleTypeDAO {
         }
     }
 
+    public List<VehicleType> findAllWithVehicles() {
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT vt FROM VehicleType vt LEFT JOIN FETCH vt.vehicles",
+                    VehicleType.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public void remove(Long id){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();

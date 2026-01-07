@@ -5,7 +5,11 @@ import dao.MaintenanceTypeDAO;
 import dao.VehicleDAO;
 import entities.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InterventionService {
 
@@ -14,183 +18,132 @@ public class InterventionService {
     private final VehicleDAO vehicleDAO = new VehicleDAO();
 
     /**
-     * Computes future interventions ordered by priority.
-     * Priority scale: 1 (low) -> 5 (high)
+     * Calcule les futures interventions par ordre de priorité.
+     * Utilise les seuils définis dans MaintenanceType (maxMileage, maxDuration).
      */
     public List<PlannedIntervention> computePlannedInterventions() {
-
         List<PlannedIntervention> result = new ArrayList<>();
-        Date today = new Date();
+        LocalDate today = LocalDate.now();
 
         List<Vehicle> vehicles = vehicleDAO.findAll();
         List<MaintenanceType> maintenanceTypes = maintenanceTypeDAO.findAll();
 
         for (Vehicle vehicle : vehicles) {
+            List<Intervention> pastInterventions = interventionDAO.findByVehicle(vehicle);
 
-            List<Intervention> pastInterventions =
-                    interventionDAO.findByVehicle(vehicle);
-
-            for (MaintenanceType maintenanceType : maintenanceTypes) {
-                // We only plan recurring maintenance interventions
-                if (!isRecurringMaintenance(maintenanceType)) {
+            for (MaintenanceType mType : maintenanceTypes) {
+                if (!isRecurringMaintenance(mType))
                     continue;
-                }
 
-                Intervention last = findLastIntervention(
-                        pastInterventions,
-                        maintenanceType
-                );
+                Intervention last = findLastIntervention(pastInterventions, mType);
 
                 int priority = 1;
-                Date plannedDate;
+                LocalDate plannedDate;
 
                 if (last != null) {
+                    LocalDate lastDate = last.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    int mileageSinceLast = vehicle.getLastMileage() - last.getVehicleMileage();
+                    long monthsSinceLast = ChronoUnit.MONTHS.between(lastDate, today);
 
-                    long months = monthsBetween(last.getDate(), today);
-                    int mileageDiff =
-                            vehicle.getLastMileage() - last.getVehicleMileage();
+                    double timeRatio = (double) monthsSinceLast / mType.getMaxDuration();
+                    double kmRatio = (double) mileageSinceLast / mType.getMaxMileage();
+                    double dangerRatio = Math.max(timeRatio, kmRatio);
 
-                    String name = maintenanceType.getName().toLowerCase();
-
-                    if (name.contains("oil")) {
-                        if (months >= 4 || mileageDiff >= 5000) priority = 5;
-                        else if (months >= 3) priority = 4;
-                        plannedDate = addMonths(last.getDate(), 6);
-
-                    } else if (name.contains("filter")) {
-                        if (months >= 6) priority = 4;
-                        plannedDate = addMonths(last.getDate(), 12);
-
-                    } else if (name.contains("brake")) {
-                        if (mileageDiff >= 10000) priority = 4;
-                        plannedDate = addMonths(last.getDate(), 12);
-
-                    } else {
-                        // default recurring maintenance
-                        if (months >= 12) priority = 3;
-                        plannedDate = addMonths(last.getDate(), 12);
+                    if (dangerRatio < 0.5) {
+                        continue;
                     }
 
+                    priority = (dangerRatio >= 1.0) ? 5 : (dangerRatio >= 0.8) ? 4 : 3;
+                    plannedDate = lastDate.plusMonths(mType.getMaxDuration());
                 } else {
-                    // Never done before: proactive reminder
-                    priority = 3;
-                    plannedDate = addMonths(today, 3);
+                    // Si jamais fait, on ne met qu'une "Inspection Générale"
+                    // au lieu de lister tous les types possibles séparément
+                    if (!mType.getName().toLowerCase().contains("inspection")) {
+                        continue;
+                    }
+                    priority = 2;
+                    plannedDate = today.plusMonths(1);
                 }
 
-                result.add(new PlannedIntervention(
-                        vehicle,
-                        maintenanceType,
-                        plannedDate,
-                        priority
-                ));
+                result.add(new PlannedIntervention(vehicle, mType,
+                        Date.from(plannedDate.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        priority));
             }
         }
-
-        result.sort(
-                Comparator.comparingInt(PlannedIntervention::getPriority).reversed()
-        );
-
+        // Tri final
+        result.sort(Comparator.comparingInt(PlannedIntervention::getPriority).reversed());
         return result;
     }
 
-    public List<PlannedIntervention> getUrgentInterventions(int limit) {
-        return computePlannedInterventions()
-                .stream()
+    public List<PlannedIntervention> getTopUrgentInterventions(int limit) {
+        return computePlannedInterventions().stream()
                 .limit(limit)
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
 
-    private boolean isRecurringMaintenance(InterventionType type) {
+    private boolean isRecurringMaintenance(MaintenanceType type) {
         String name = type.getName().toLowerCase();
-
-        return name.contains("oil")
-                || name.contains("filter")
-                || name.contains("brake")
-                || name.contains("coolant")
-                || name.contains("inspection")
-                || name.contains("service");
+        return name.contains("oil") || name.contains("filter") || name.contains("brake")
+                || name.contains("coolant") || name.contains("inspection") || name.contains("service");
     }
 
-    private Intervention findLastIntervention(
-            List<Intervention> interventions,
-            InterventionType type
-    ) {
+    private Intervention findLastIntervention(List<Intervention> interventions, InterventionType type) {
         return interventions.stream()
                 .filter(i -> i.getInterventionType().equals(type))
                 .max(Comparator.comparing(Intervention::getDate))
                 .orElse(null);
     }
 
-    private long monthsBetween(Date d1, Date d2) {
-        return (d2.getTime() - d1.getTime()) / (1000L * 60 * 60 * 24 * 30);
-    }
-
-    private Date addMonths(Date date, int months) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MONTH, months);
-        return cal.getTime();
-    }
-
     /**
-     * DTO used only for displaying planned interventions.
+     * DTO optimisé pour l'affichage Swing.
      */
-    public static class PlannedIntervention {
 
-        private final Vehicle vehicle;
-        private final InterventionType interventionType;
+    public static class PlannedIntervention {
+        private final String ownerName;
+        private final String ownerPhone;
+        private final String ownerEmail; // Ajout de l'email
+        private final String vehicleLabel;
+        private final String interventionName;
         private final Date plannedDate;
         private final int priority;
 
-        public PlannedIntervention(
-                Vehicle vehicle,
-                InterventionType interventionType,
-                Date plannedDate,
-                int priority
-        ) {
-            this.vehicle = vehicle;
-            this.interventionType = interventionType;
-            this.plannedDate = plannedDate;
-            this.priority = priority;
+        public PlannedIntervention(Vehicle v, InterventionType it, Date pd, int p) {
+            this.ownerName = v.getOwner().getFirstName() + " " + v.getOwner().getLastName();
+            this.ownerPhone = v.getOwner().getPhoneNumber() != null ? v.getOwner().getPhoneNumber() : "N/A";
+            this.ownerEmail = v.getOwner().getEmail() != null ? v.getOwner().getEmail() : "N/A"; //
+            this.vehicleLabel = v.getVehicleType().getBrand() + " " + v.getVehicleType().getModel();
+            this.interventionName = it.getName();
+            this.plannedDate = pd;
+            this.priority = p;
         }
 
-        public int getPriority() {
-            return priority;
+        // Getters
+        public String getOwnerName() {
+            return ownerName;
+        }
+
+        public String getOwnerPhone() {
+            return ownerPhone;
+        }
+
+        public String getOwnerEmail() {
+            return ownerEmail;
+        }
+
+        public String getVehicleLabel() {
+            return vehicleLabel;
+        }
+
+        public String getInterventionName() {
+            return interventionName;
         }
 
         public Date getPlannedDate() {
             return plannedDate;
         }
 
-        public String getInterventionName() {
-            return interventionType.getName();
-        }
-
-        public String getOwnerName() {
-            Owner owner = vehicle.getOwner();
-            return owner.getFirstName() + " " + owner.getLastName();
-        }
-
-        public String getOwnerPhoneNumber() {
-            return vehicle.getOwner().getPhoneNumber();
-        }
-
-        public String getVehicleLabel() {
-            VehicleType vt = vehicle.getVehicleType();
-            return vt.getBrand() + " " + vt.getModel();
-        }
-
-        @Override
-        public String toString() {
-            Owner owner = vehicle.getOwner();
-            VehicleType vt = vehicle.getVehicleType();
-
-            return "Priority " + priority +
-                    " | " + interventionType.getName() +
-                    " | Planned: " + plannedDate +
-                    " | Owner: " + owner.getPhoneNumber() + " " +
-                    owner.getFirstName() + " " + owner.getLastName() +
-                    " | Vehicle: " + vt.getBrand() + " " + vt.getModel();
+        public int getPriority() {
+            return priority;
         }
     }
 }

@@ -31,9 +31,11 @@ public class Owner {
     }
 
     // if we want to add a new client without necessarily adding their contact info
-    public Owner(String firstName, String lastName) {
+    public Owner(String firstName, String lastName,String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
     public Owner(String firstName, String lastName, String phoneNumber, String email, List<Vehicle> vehicles) {

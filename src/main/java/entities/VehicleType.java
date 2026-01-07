@@ -146,21 +146,4 @@ public class VehicleType {
         pricings.remove(pricing);
         pricing.setVehicleType(null);
     }
-    // toString
-
-
-    @Override
-    public String toString() {
-        return "VehicleType{" +
-                "id=" + id +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", fuelType='" + fuelType + '\'' +
-                ", gearbox='" + gearbox + '\'' +
-                ", numberOfDoors=" + numberOfDoors +
-                ", numberOfSeats=" + numberOfSeats +
-                ", power=" + power +
-                ", vehicles=" + vehicles +
-                '}';
-    }
 }
