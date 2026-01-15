@@ -6,11 +6,34 @@ import entities.Vehicle;
 import jakarta.persistence.EntityTransaction;
 import utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import java.util.*;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * DAO for Intervention entity.
+ * Prevents duplicate interventions (same vehicle + same intervention type +
+ * same date).
+ */
 public class InterventionDAO {
 
+    /**
+     * Saves a new intervention if it's not a duplicate.
+     * 
+     * @param intervention The intervention to save
+     * @throws IllegalArgumentException if an intervention for the same vehicle and
+     *                                  type exists on the same date
+     */
     public void save(Intervention intervention) {
+        // Check for duplicates (same vehicle + same intervention type + same date)
+        if (existsByVehicleTypeAndDate(intervention.getVehicle(),
+                intervention.getInterventionType(),
+                intervention.getDate())) {
+            throw new IllegalArgumentException(
+                    "An intervention of this type already exists for this vehicle on this date.");
+        }
+
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
@@ -37,6 +60,85 @@ public class InterventionDAO {
         }
     }
 
+    /**
+     * Checks if an intervention exists for the given vehicle, type, and date.
+     * Compares dates by day only (ignoring time).
+     * 
+     * @param vehicle          The vehicle
+     * @param interventionType The intervention type
+     * @param date             The date
+     * @return true if exists, false otherwise
+     */
+    public boolean existsByVehicleTypeAndDate(Vehicle vehicle, InterventionType interventionType, Date date) {
+        if (vehicle == null || vehicle.getId() == null ||
+                interventionType == null || interventionType.getId() == null || date == null) {
+            return false;
+        }
+
+        // Get start and end of the day
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startOfDay = cal.getTime();
+
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date endOfDay = cal.getTime();
+
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(i) FROM Intervention i WHERE i.vehicle.id = :vehicleId " +
+                            "AND i.interventionType.id = :typeId " +
+                            "AND i.date >= :startOfDay AND i.date < :endOfDay",
+                    Long.class)
+                    .setParameter("vehicleId", vehicle.getId())
+                    .setParameter("typeId", interventionType.getId())
+                    .setParameter("startOfDay", startOfDay)
+                    .setParameter("endOfDay", endOfDay)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Finds all interventions for a vehicle on a specific date.
+     * 
+     * @param vehicle The vehicle
+     * @param date    The date
+     * @return List of interventions on that date
+     */
+    public List<Intervention> findByVehicleAndDate(Vehicle vehicle, Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startOfDay = cal.getTime();
+
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date endOfDay = cal.getTime();
+
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT i FROM Intervention i WHERE i.vehicle = :vehicle " +
+                            "AND i.date >= :startOfDay AND i.date < :endOfDay",
+                    Intervention.class)
+                    .setParameter("vehicle", vehicle)
+                    .setParameter("startOfDay", startOfDay)
+                    .setParameter("endOfDay", endOfDay)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public Intervention findById(Long id) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -46,32 +148,13 @@ public class InterventionDAO {
         }
     }
 
-    public void removeIntervention(Long id) {
+    public void remove(Long id) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             Intervention intervention = em.find(Intervention.class, id);
             et.begin();
             em.remove(intervention);
-            et.commit();
-        } catch (RuntimeException re) {
-            if (et.isActive()) {
-                et.rollback();
-            }
-            throw re;
-        } finally {
-            em.close();
-        }
-    }
-
-    public void setInterventionDate(Long id, Date date) {
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction et = em.getTransaction();
-        try {
-            Intervention intervention = em.find(Intervention.class, id);
-            et.begin();
-            // À ADAPTER : Vérifiez le nom du setter dans votre entité Intervention
-            intervention.setDate(date);
             et.commit();
         } catch (RuntimeException re) {
             if (et.isActive()) {
@@ -101,13 +184,13 @@ public class InterventionDAO {
         }
     }
 
-    public void setPrice(Long id, double Price) {
+    public void setPrice(Long id, double price) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             Intervention intervention = em.find(Intervention.class, id);
             et.begin();
-            intervention.setPrice(Price);
+            intervention.setPrice(price);
             et.commit();
         } catch (RuntimeException re) {
             if (et.isActive()) {
@@ -123,7 +206,7 @@ public class InterventionDAO {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
             return em.createQuery(
-                    "SELECT r FROM Intervention r",
+                    "SELECT i FROM Intervention i",
                     Intervention.class).getResultList();
         } finally {
             em.close();
@@ -134,7 +217,7 @@ public class InterventionDAO {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
             return em.createQuery(
-                    "SELECT i FROM Intervention i WHERE i.vehicle = :vehicle",
+                    "SELECT i FROM Intervention i WHERE i.vehicle = :vehicle ORDER BY i.date DESC",
                     Intervention.class)
                     .setParameter("vehicle", vehicle)
                     .getResultList();

@@ -162,7 +162,7 @@ public class MainFrame extends JFrame {
         // Try to load the logo image
         JLabel logoImage = new JLabel();
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("/images/logo.png"));
+            ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoV2.png"));
             // Scale the image to fit
             Image scaledImage = icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
             logoImage.setIcon(new ImageIcon(scaledImage));

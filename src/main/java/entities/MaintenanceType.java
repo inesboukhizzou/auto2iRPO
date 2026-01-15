@@ -2,38 +2,32 @@ package entities;
 
 import jakarta.persistence.*;
 
+/**
+ * Represents a type of maintenance intervention.
+ * Maintenance types have maximum mileage and duration thresholds
+ * that determine when the next maintenance should occur.
+ */
 @Entity
 @Table(name = "MaintenanceType")
-public class MaintenanceType extends InterventionType{
+public class MaintenanceType extends InterventionType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "maxMileage", nullable = false, length = 100)
+    @Column(name = "maxMileage", nullable = false)
     private int maxMileage;
 
-    @Column(name = "maxDuration", nullable = false, length = 100)
+    @Column(name = "maxDuration", nullable = false)
     private int maxDuration;
 
     public MaintenanceType() {
+        super();
     }
 
-    public MaintenanceType(int maxMileage, int maxDuration) {
+    public MaintenanceType(String name, int maxMileage, int maxDuration) {
+        super(name);
         this.maxMileage = maxMileage;
         this.maxDuration = maxDuration;
     }
 
-    // getters and setters
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // Getters and Setters
 
     public int getMaxMileage() {
         return maxMileage;
@@ -54,7 +48,8 @@ public class MaintenanceType extends InterventionType{
     @Override
     public String toString() {
         return "MaintenanceType{" +
-                "id=" + id +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
                 ", maxMileage=" + maxMileage +
                 ", maxDuration=" + maxDuration +
                 '}';

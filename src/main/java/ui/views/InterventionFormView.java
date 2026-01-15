@@ -18,7 +18,7 @@ public class InterventionFormView extends JPanel {
     private static final Color CARD_BACKGROUND = Color.WHITE;
     private static final Color PRIMARY_COLOR = new Color(37, 99, 235);
     private static final Color SUCCESS_COLOR = new Color(34, 197, 94);
-    private static final Color WARNING_COLOR = new Color(245, 158, 11);
+    private static final Color WARNING_COLOR = new Color(173, 12, 12);
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
     private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
     private static final Color BORDER_COLOR = new Color(226, 232, 240);
@@ -242,7 +242,7 @@ public class InterventionFormView extends JPanel {
 
         // Help text
         JLabel helpText = new JLabel(
-                "⚠️ You must select a vehicle to register an intervention. Click 'View Diagram' to visualize maintenance areas.");
+                "⚠ You must select a vehicle to register an intervention. Click 'View Diagram' to visualize maintenance areas.");
         helpText.setFont(new Font("SansSerif", Font.ITALIC, 12));
         helpText.setForeground(WARNING_COLOR);
         helpText.setBorder(new EmptyBorder(10, 0, 0, 0));
@@ -574,7 +574,7 @@ public class InterventionFormView extends JPanel {
         styleSecondaryButton(btnClear);
 
         btnSave = new JButton("Save Intervention");
-        stylePrimaryButton(btnSave);
+        styleSecondaryButton(btnSave);
 
         buttonPanel.add(btnClear);
         buttonPanel.add(btnSave);
@@ -640,35 +640,6 @@ public class InterventionFormView extends JPanel {
     private void styleComboBox(JComboBox<?> combo) {
         combo.setBackground(INPUT_BACKGROUND);
         combo.setBorder(new LineBorder(BORDER_COLOR, 1, true));
-    }
-
-    /**
-     * Styles a primary button.
-     */
-    private void stylePrimaryButton(JButton button) {
-        button.setFont(new Font("SansSerif", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(PRIMARY_COLOR);
-        button.setPreferredSize(new Dimension(220, 50));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(30, 64, 175), 1),
-                new EmptyBorder(10, 20, 10, 20)));
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(new Color(30, 64, 175));
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(PRIMARY_COLOR);
-            }
-        });
     }
 
     /**

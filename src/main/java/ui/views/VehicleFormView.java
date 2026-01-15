@@ -15,7 +15,6 @@ public class VehicleFormView extends JPanel {
     // Theme colors
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
-    private static final Color PRIMARY_COLOR = new Color(37, 99, 235); // More sober blue
     private static final Color SECONDARY_COLOR = new Color(99, 102, 241); // Indigo
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
     private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
@@ -507,7 +506,7 @@ public class VehicleFormView extends JPanel {
         styleSecondaryButton(btnClear);
 
         btnSave = new JButton("Save Vehicle");
-        stylePrimaryButton(btnSave);
+        styleSecondaryButton(btnSave);
 
         buttonPanel.add(btnClear);
         buttonPanel.add(btnSave);
@@ -584,36 +583,6 @@ public class VehicleFormView extends JPanel {
     private void styleComboBox(JComboBox<?> combo) {
         combo.setBackground(INPUT_BACKGROUND);
         combo.setBorder(new LineBorder(BORDER_COLOR, 1, true));
-    }
-
-    /**
-     * Styles a primary button with more visible/sober design.
-     */
-    private void stylePrimaryButton(JButton button) {
-        button.setFont(new Font("SansSerif", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(Color.BLUE);
-        button.setPreferredSize(new Dimension(200, 50));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        // Add subtle shadow effect
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(30, 64, 175), 1),
-                new EmptyBorder(10, 20, 10, 20)));
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(new Color(30, 64, 175)); // Darker blue
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(PRIMARY_COLOR);
-            }
-        });
     }
 
     /**

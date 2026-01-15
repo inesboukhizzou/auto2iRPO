@@ -19,7 +19,6 @@ public class VehicleDiagramView extends JPanel {
     // Theme colors
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
-    private static final Color PRIMARY_COLOR = new Color(59, 130, 246);
     private static final Color DANGER_COLOR = new Color(239, 68, 68);
     private static final Color WARNING_COLOR = new Color(245, 158, 11);
     private static final Color SUCCESS_COLOR = new Color(34, 197, 94);
@@ -32,10 +31,8 @@ public class VehicleDiagramView extends JPanel {
     private VehiclePart selectedPart;
     private VehiclePart hoverPart;
 
-    // Current vehicle and interventions
-    private Vehicle currentVehicle;
+    // Planned interventions data
     private List<PlannedIntervention> plannedInterventions;
-    private List<Intervention> pastInterventions;
 
     // Components
     private DiagramPanel diagramPanel;
@@ -227,11 +224,14 @@ public class VehicleDiagramView extends JPanel {
 
     /**
      * Updates the view with vehicle data.
+     * 
+     * @param vehicle The vehicle to display (used for context, may be null)
+     * @param planned List of planned interventions to visualize
+     * @param past    List of past interventions (kept for API compatibility, not
+     *                used internally)
      */
     public void setVehicleData(Vehicle vehicle, List<PlannedIntervention> planned, List<Intervention> past) {
-        this.currentVehicle = vehicle;
         this.plannedInterventions = planned != null ? planned : new ArrayList<>();
-        this.pastInterventions = past != null ? past : new ArrayList<>();
 
         // Update part statuses based on interventions
         updatePartStatuses();
