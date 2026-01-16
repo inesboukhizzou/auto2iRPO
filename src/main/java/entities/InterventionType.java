@@ -31,8 +31,7 @@ public class InterventionType {
         this.name = name;
     }
 
-   // getters and setters
-
+    // getters and setters
 
     public Long getId() {
         return id;
@@ -53,15 +52,17 @@ public class InterventionType {
     public List<Intervention> getInterventions() {
         return interventions;
     }
+
     public void setInterventions(List<Intervention> interventions) {
         this.interventions = interventions;
     }
+
     public void addIntervention(Intervention intervention) {
         interventions.add(intervention);
         intervention.setInterventionType(this);
     }
 
-    // Helper method to remove a vehicle
+    // Helper method to remove an intervention
     public void removeIntervention(Intervention intervention) {
         interventions.remove(intervention);
         intervention.setInterventionType(null);
@@ -74,12 +75,13 @@ public class InterventionType {
     public void setParts(List<Part> parts) {
         this.parts = parts;
     }
+
     public void addPart(Part part) {
         parts.add(part);
         part.setInterventionType(this);
     }
 
-    // Helper method to remove a vehicle
+    // Helper method to remove a part
     public void removePart(Part part) {
         parts.remove(part);
         part.setInterventionType(null);

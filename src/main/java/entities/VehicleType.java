@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="VehicleType")
+@Table(name = "VehicleType")
 public class VehicleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +31,11 @@ public class VehicleType {
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pricing> pricings = new ArrayList<>();
 
-    public VehicleType(){
+    public VehicleType() {
     }
-    public VehicleType(String brand, String model, String fuelType, String gearbox, int numberOfDoors, int numberOfSeats, int power) {
+
+    public VehicleType(String brand, String model, String fuelType, String gearbox, int numberOfDoors,
+            int numberOfSeats, int power) {
         this.brand = brand;
         this.model = model;
         this.fuelType = fuelType;
@@ -135,13 +137,14 @@ public class VehicleType {
     public void setPricings(List<Pricing> pricings) {
         this.pricings = pricings;
     }
-    // Helper method to add a vehicle
+
+    // Helper method to add a pricing rule
     public void addPricing(Pricing pricing) {
         pricings.add(pricing);
         pricing.setVehicleType(this);
     }
 
-    // Helper method to remove a vehicle
+    // Helper method to remove a pricing rule
     public void removePricing(Pricing pricing) {
         pricings.remove(pricing);
         pricing.setVehicleType(null);

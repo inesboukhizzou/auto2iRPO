@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name="Vehicle")
+@Table(name = "Vehicle")
 
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relation ManyToOne : plusieurs véhicules appartiennent à un propriétaire
+    // ManyToOne relationship: multiple vehicles can belong to one owner
     @ManyToOne
     @JoinColumn(name = "ownerId", nullable = false)
     private Owner owner;
 
-    // Relation ManyToOne : plusieurs véhicules peuvent être du même type
+    // ManyToOne relationship: multiple vehicles can have the same type
     @ManyToOne
     @JoinColumn(name = "vehicleTypeId", nullable = false)
     private VehicleType vehicleType;
@@ -35,7 +35,7 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Intervention> interventions = new ArrayList<>();
 
-    public Vehicle(){
+    public Vehicle() {
     }
 
     public Vehicle(Owner owner, VehicleType vehicleType, Date dateOfFirstRegistration, int lastMileage) {
@@ -95,13 +95,12 @@ public class Vehicle {
         this.interventions = interventions;
     }
 
-
     public void addIntervention(Intervention intervention) {
         interventions.add(intervention);
         intervention.setVehicle(this);
     }
 
-    // Helper method to remove a vehicle
+    // Helper method to remove an intervention
     public void removeIntervention(Intervention intervention) {
         interventions.remove(intervention);
         intervention.setVehicle(null);
@@ -121,7 +120,10 @@ public class Vehicle {
     public String toString() {
         return "Vehicle{" +
                 "id=" + id +
-                ", registration=" + (registration != null ? registration.getPart1() + registration.getPart2() + registration.getPart3() : null) +
+                ", registration="
+                + (registration != null ? registration.getPart1() + registration.getPart2() + registration.getPart3()
+                        : null)
+                +
                 ", lastMileage=" + lastMileage +
                 ", dateOfFirstRegistration=" + dateOfFirstRegistration +
                 '}';
