@@ -45,7 +45,7 @@ public class VehicleType {
         this.power = power;
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }
@@ -118,13 +118,13 @@ public class VehicleType {
         this.vehicles = vehicles;
     }
 
-    // Helper method to add a vehicle
+    
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
         vehicle.setVehicleType(this);
     }
 
-    // Helper method to remove a vehicle
+    
     public void removeVehicle(Vehicle vehicle) {
         vehicles.remove(vehicle);
         vehicle.setVehicleType(null);
@@ -138,13 +138,13 @@ public class VehicleType {
         this.pricings = pricings;
     }
 
-    // Helper method to add a pricing rule
+    
     public void addPricing(Pricing pricing) {
         pricings.add(pricing);
         pricing.setVehicleType(this);
     }
 
-    // Helper method to remove a pricing rule
+    
     public void removePricing(Pricing pricing) {
         pricings.remove(pricing);
         pricing.setVehicleType(null);

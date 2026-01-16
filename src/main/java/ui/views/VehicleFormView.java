@@ -12,24 +12,24 @@ import entities.VehicleType;
  */
 public class VehicleFormView extends JPanel {
 
-    // Theme colors
+    
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
-    private static final Color SECONDARY_COLOR = new Color(99, 102, 241); // Indigo
+    private static final Color SECONDARY_COLOR = new Color(99, 102, 241); 
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
     private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
     private static final Color BORDER_COLOR = new Color(226, 232, 240);
     private static final Color INPUT_BACKGROUND = new Color(248, 250, 252);
 
-    // Owner components
+    
     public JComboBox<Owner> comboOwner;
     public JButton btnAddOwner;
 
-    // Vehicle type components
+    
     public JComboBox<VehicleType> comboVehicleType;
     public JButton btnAddVehicleType;
 
-    // Vehicle type form fields (for adding new type)
+    
     public JTextField txtBrand;
     public JTextField txtModel;
     public JComboBox<String> comboFuelType;
@@ -38,20 +38,20 @@ public class VehicleFormView extends JPanel {
     public JTextField txtSeats;
     public JTextField txtPower;
 
-    // Vehicle information
+    
     public JTextField txtMileage;
     public JTextField txtDateRegistration;
 
-    // License plate (SIV format: AA-123-BB)
+    
     public JTextField txtRegPart1;
     public JTextField txtRegPart2;
     public JTextField txtRegPart3;
 
-    // Action buttons
+    
     public JButton btnSave;
     public JButton btnClear;
 
-    // Panel for new vehicle type
+    
     private JPanel vehicleTypeFormPanel;
     private boolean vehicleTypeFormVisible = false;
 
@@ -60,10 +60,10 @@ public class VehicleFormView extends JPanel {
         setBackground(BACKGROUND);
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        // Header
+        
         add(createHeader(), BorderLayout.NORTH);
 
-        // Main form
+        
         add(createFormPanel(), BorderLayout.CENTER);
     }
 
@@ -102,23 +102,23 @@ public class VehicleFormView extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 25));
         mainPanel.setOpaque(false);
 
-        // Form sections container
+        
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
         formContainer.setOpaque(false);
 
-        // Owner section
+        
         formContainer.add(createOwnerSection());
         formContainer.add(Box.createVerticalStrut(20));
 
-        // Vehicle type section
+        
         formContainer.add(createVehicleTypeSection());
         formContainer.add(Box.createVerticalStrut(20));
 
-        // Vehicle information section
+        
         formContainer.add(createVehicleInfoSection());
 
-        // Wrapper for the form (limit width)
+        
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setOpaque(false);
         wrapper.add(formContainer, BorderLayout.NORTH);
@@ -130,7 +130,7 @@ public class VehicleFormView extends JPanel {
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Action buttons
+        
         mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
         return mainPanel;
@@ -149,7 +149,7 @@ public class VehicleFormView extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 15, 20);
 
-        // Owner selection
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -160,7 +160,7 @@ public class VehicleFormView extends JPanel {
         comboOwner.setFont(new Font("SansSerif", Font.PLAIN, 14));
         styleComboBox(comboOwner);
 
-        // Custom renderer to show only first name + last name
+        
         comboOwner.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -178,7 +178,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(comboOwner, gbc);
 
-        // Add owner button
+        
         btnAddOwner = new JButton("+ New Owner");
         styleSecondaryButton(btnAddOwner);
 
@@ -204,7 +204,7 @@ public class VehicleFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 15, 20);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Vehicle type selection
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -215,7 +215,7 @@ public class VehicleFormView extends JPanel {
         comboVehicleType.setFont(new Font("SansSerif", Font.PLAIN, 14));
         styleComboBox(comboVehicleType);
 
-        // Renderer to show brand + model + fuel
+        
         comboVehicleType.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -233,7 +233,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(comboVehicleType, gbc);
 
-        // Add vehicle type button
+        
         btnAddVehicleType = new JButton("+ New Vehicle Type");
         styleSecondaryButton(btnAddVehicleType);
         btnAddVehicleType.addActionListener(e -> toggleVehicleTypeForm());
@@ -244,7 +244,7 @@ public class VehicleFormView extends JPanel {
 
         content.add(grid);
 
-        // Vehicle type form (initially hidden)
+        
         vehicleTypeFormPanel = createVehicleTypeFormPanel();
         vehicleTypeFormPanel.setVisible(false);
         content.add(vehicleTypeFormPanel);
@@ -278,7 +278,7 @@ public class VehicleFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 10, 20);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Brand
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -288,7 +288,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(txtBrand, gbc);
 
-        // Model
+        
         gbc.gridx = 2;
         gbc.weightx = 0;
         grid.add(createSmallLabel("Model:"), gbc);
@@ -297,7 +297,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(txtModel, gbc);
 
-        // Fuel type
+        
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
@@ -309,7 +309,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(comboFuelType, gbc);
 
-        // Gearbox
+        
         gbc.gridx = 2;
         gbc.weightx = 0;
         grid.add(createSmallLabel("Gearbox:"), gbc);
@@ -320,7 +320,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(comboGearbox, gbc);
 
-        // Doors
+        
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.weightx = 0;
@@ -331,7 +331,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(txtDoors, gbc);
 
-        // Seats
+        
         gbc.gridx = 2;
         gbc.weightx = 0;
         grid.add(createSmallLabel("Seats:"), gbc);
@@ -341,7 +341,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(txtSeats, gbc);
 
-        // Power
+        
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.weightx = 0;
@@ -382,7 +382,7 @@ public class VehicleFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 20, 30);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // License plate
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -426,7 +426,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(regPanel, gbc);
 
-        // Mileage
+        
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
@@ -449,7 +449,7 @@ public class VehicleFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(mileagePanel, gbc);
 
-        // First registration date
+        
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.weightx = 0;
@@ -514,7 +514,7 @@ public class VehicleFormView extends JPanel {
         return buttonPanel;
     }
 
-    // ===== UTILITY METHODS =====
+    
 
     /**
      * Creates a section with title and content.
@@ -626,7 +626,7 @@ public class VehicleFormView extends JPanel {
         if (comboVehicleType.getItemCount() > 0) {
             comboVehicleType.setSelectedIndex(0);
         }
-        // Clear vehicle type form
+        
         if (txtBrand != null)
             txtBrand.setText("");
         if (txtModel != null)
@@ -641,7 +641,7 @@ public class VehicleFormView extends JPanel {
             comboFuelType.setSelectedIndex(0);
         if (comboGearbox != null && comboGearbox.getItemCount() > 0)
             comboGearbox.setSelectedIndex(0);
-        // Hide vehicle type form
+        
         if (vehicleTypeFormVisible) {
             toggleVehicleTypeForm();
         }

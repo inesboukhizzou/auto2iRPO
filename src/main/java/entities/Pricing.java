@@ -21,7 +21,7 @@ public class Pricing {
     @JoinColumn(name = "vehicle_type_id", nullable = false)
     private VehicleType vehicleType;
 
-    // Constructors
+    
     public Pricing() {
     }
 
@@ -31,7 +31,7 @@ public class Pricing {
         this.vehicleType = vehicleType;
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

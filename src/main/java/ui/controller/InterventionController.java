@@ -48,7 +48,7 @@ public class InterventionController {
      * Initializes ComboBox data.
      */
     private void initData() {
-        // Load vehicles
+
         try {
             List<Vehicle> vehicles = vehicleDAO.findAll();
             view.comboVehicle.removeAllItems();
@@ -59,7 +59,6 @@ public class InterventionController {
             System.err.println("Error loading vehicles: " + e.getMessage());
         }
 
-        // Load intervention types
         try {
             List<InterventionType> types = interventionTypeDAO.findAll();
             view.comboInterventionType.removeAllItems();
@@ -70,7 +69,6 @@ public class InterventionController {
             System.err.println("Error loading intervention types: " + e.getMessage());
         }
 
-        // Load maintenance types
         try {
             List<MaintenanceType> maintenanceTypes = maintenanceTypeDAO.findAll();
             view.comboMaintenanceType.removeAllItems();
@@ -86,18 +84,23 @@ public class InterventionController {
      * Configures event handlers.
      */
     private void initEventHandlers() {
-        // Calculate price button
+
         view.btnCalculate.addActionListener(e -> calculatePrice());
 
-        // Save button
         view.btnSave.addActionListener(e -> saveIntervention());
 
-        // Clear button
         view.btnClear.addActionListener(e -> view.clearForm());
     }
 
     /**
      * Calculates the intervention price.
+     * Uses PriceService to get the price from the Pricing table based on
+     * InterventionType and VehicleType combination.
+     * 
+     * The PriceService.calculatePrice() method:
+     * 1. First tries to find the exact price in the Pricing table
+     * 2. If not found, uses fallback calculation with multipliers based on vehicle
+     * characteristics
      */
     private void calculatePrice() {
         try {
@@ -112,29 +115,51 @@ public class InterventionController {
                 return;
             }
 
-            // Get base price
-            double basePrice;
-            try {
-                basePrice = Double.parseDouble(view.txtBasePrice.getText().trim());
-            } catch (NumberFormatException e) {
+            if (selectedType == null) {
                 JOptionPane.showMessageDialog(view,
-                        "Base price must be a valid number.",
-                        "Invalid Format",
+                        "Please select an intervention type first.",
+                        "Required Field",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Create temporary intervention for calculation
+            // Log the selected values for debugging
+            VehicleType vehicleType = selectedVehicle.getVehicleType();
+            System.out.println("=== Price Calculation Request ===");
+            System.out.println("Selected Vehicle: " + selectedVehicle);
+            System.out.println("Vehicle Type: " + (vehicleType != null
+                    ? vehicleType.getBrand() + " " + vehicleType.getModel() + " (ID: " + vehicleType.getId() + ")"
+                    : "NULL"));
+            System.out.println("Intervention Type: " + selectedType.getName() + " (ID: " + selectedType.getId() + ")");
+
+            // Parse base price if provided (used for fallback calculation)
+            double basePrice = 0.0;
+            String basePriceText = view.txtBasePrice.getText().trim();
+            if (!basePriceText.isEmpty()) {
+                try {
+                    basePrice = Double.parseDouble(basePriceText);
+                } catch (NumberFormatException e) {
+                    // Ignore, will use default
+                }
+            }
+
+            // Create temporary intervention for price calculation
             Intervention tempIntervention = new Intervention();
             tempIntervention.setVehicle(selectedVehicle);
             tempIntervention.setInterventionType(selectedType);
-            tempIntervention.setPrice(basePrice);
+            tempIntervention.setPrice(basePrice); // Base price for fallback only
 
-            // Calculate final price
-            double finalPrice = priceService.FinalPrice(tempIntervention);
+            // Use PriceService.calculatePrice() which:
+            // 1. Checks the Pricing table for exact InterventionType + VehicleType match
+            // 2. If found, returns that price
+            // 3. If not found, calculates fallback price with multipliers
+            double finalPrice = priceService.calculatePrice(tempIntervention);
 
-            // Display result
+            // Display the calculated price
             view.displayPrice(finalPrice);
+
+            System.out.println("Final calculated price: " + finalPrice + " €");
+            System.out.println("=================================");
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
@@ -150,38 +175,61 @@ public class InterventionController {
      */
     private void saveIntervention() {
         try {
-            // Validate fields
+
             if (!validateFields()) {
                 return;
             }
 
-            // Get values
             Vehicle selectedVehicle = (Vehicle) view.comboVehicle.getSelectedItem();
             InterventionType selectedType = (InterventionType) view.comboInterventionType.getSelectedItem();
 
-            // Date
             Date interventionDate;
             String dateText = view.txtDate.getText().trim();
             if (dateText.equals("yyyy-MM-dd") || dateText.isEmpty()) {
-                interventionDate = new Date(); // Today by default
+                interventionDate = new Date();
             } else {
                 interventionDate = dateFormat.parse(dateText);
             }
 
-            // Mileage
             int mileage = Integer.parseInt(view.txtMileage.getText().trim());
 
-            // Price
+            // Calculate the price using PriceService
             double price;
             String finalPriceText = view.txtFinalPrice.getText().trim();
-            if (finalPriceText.isEmpty()) {
-                // If no calculated price, use base price
-                price = Double.parseDouble(view.txtBasePrice.getText().trim());
-            } else {
+
+            if (!finalPriceText.isEmpty()) {
+                // Use the already calculated final price if available
                 price = Double.parseDouble(finalPriceText.replace(",", "."));
+            } else {
+                // Calculate price automatically using PriceService
+                VehicleType vehicleType = selectedVehicle.getVehicleType();
+
+                // First try to get exact price from database
+                Double exactPrice = priceService.getExactPrice(selectedType, vehicleType);
+
+                if (exactPrice != null) {
+                    price = exactPrice;
+                } else {
+                    // Use fallback calculation with base price if provided
+                    double basePrice = 0.0;
+                    String basePriceText = view.txtBasePrice.getText().trim();
+                    if (!basePriceText.isEmpty()) {
+                        try {
+                            basePrice = Double.parseDouble(basePriceText);
+                        } catch (NumberFormatException e) {
+                            // Use default
+                        }
+                    }
+
+                    Intervention tempIntervention = new Intervention();
+                    tempIntervention.setVehicle(selectedVehicle);
+                    tempIntervention.setInterventionType(selectedType);
+                    tempIntervention.setPrice(basePrice);
+
+                    price = priceService.calculatePrice(tempIntervention);
+                }
             }
 
-            // Create intervention
             Intervention intervention = new Intervention();
             intervention.setVehicle(selectedVehicle);
             intervention.setInterventionType(selectedType);
@@ -189,24 +237,19 @@ public class InterventionController {
             intervention.setVehicleMileage(mileage);
             intervention.setPrice(price);
 
-            // Save
             interventionDAO.save(intervention);
 
-            // Update vehicle mileage if higher
             if (mileage > selectedVehicle.getLastMileage()) {
                 vehicleDAO.setLastMileage(selectedVehicle.getId(), mileage);
             }
 
-            // Success message
             JOptionPane.showMessageDialog(view,
                     "Intervention registered successfully!\nPrice: " + String.format("%.2f", price) + " €",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Clear the form
             view.clearForm();
 
-            // Refresh data
             initData();
 
         } catch (NumberFormatException e) {
@@ -232,7 +275,7 @@ public class InterventionController {
      * Validates form fields.
      */
     private boolean validateFields() {
-        // Check vehicle - THIS IS REQUIRED
+
         if (view.comboVehicle.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(view,
                     "You MUST select a vehicle to register an intervention.",
@@ -241,7 +284,6 @@ public class InterventionController {
             return false;
         }
 
-        // Check intervention type
         if (view.comboInterventionType.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(view,
                     "Please select an intervention type.",
@@ -250,7 +292,6 @@ public class InterventionController {
             return false;
         }
 
-        // Check mileage
         if (view.txtMileage.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(view,
                     "Please enter the current mileage.",
@@ -259,14 +300,8 @@ public class InterventionController {
             return false;
         }
 
-        // Check base price
-        if (view.txtBasePrice.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(view,
-                    "Please enter a base price.",
-                    "Required Field",
-                    JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
+        // Note: Base price is optional - if not provided, price will be
+        // calculated from the Pricing table or using fallback logic
 
         return true;
     }

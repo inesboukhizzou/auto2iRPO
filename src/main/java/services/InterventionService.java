@@ -29,7 +29,7 @@ public class InterventionService {
         private final Vehicle vehicle;
         private final MaintenanceType maintenanceType;
         private final Date plannedDate;
-        private final int priority; // Higher = more urgent
+        private final int priority; 
         private final String reason;
 
         public PlannedIntervention(Vehicle vehicle, MaintenanceType maintenanceType,
@@ -140,14 +140,14 @@ public class InterventionService {
     public List<PlannedIntervention> getTopUrgentInterventions(int limit) {
         List<PlannedIntervention> allPlanned = new ArrayList<>();
 
-        // Get all vehicles and all maintenance types
+        
         List<Vehicle> vehicles = vehicleDAO.findAll();
         List<MaintenanceType> maintenanceTypes = maintenanceTypeDAO.findAll();
 
         Date today = new Date();
 
         for (Vehicle vehicle : vehicles) {
-            // Load interventions for this vehicle
+            
             List<Intervention> vehicleInterventions = interventionDAO.findByVehicle(vehicle);
 
             for (MaintenanceType mt : maintenanceTypes) {
@@ -160,7 +160,7 @@ public class InterventionService {
             }
         }
 
-        // Sort by priority (descending) and return top 'limit' results
+        
         return allPlanned.stream()
                 .sorted((a, b) -> Integer.compare(b.getPriority(), a.getPriority()))
                 .limit(limit)
@@ -175,7 +175,7 @@ public class InterventionService {
             MaintenanceType maintenanceType,
             List<Intervention> interventions,
             Date today) {
-        // Find the last intervention of this maintenance type for the vehicle
+        
         Intervention lastIntervention = interventions.stream()
                 .filter(i -> i.getInterventionType() != null
                         && i.getInterventionType().getId().equals(maintenanceType.getId()))
@@ -191,62 +191,62 @@ public class InterventionService {
         Date plannedDate = today;
 
         if (lastIntervention == null) {
-            // Never had this type of maintenance - use vehicle registration date
+            
             Date baseDate = vehicle.getDateOfFirstRegistration();
             if (baseDate == null) {
                 baseDate = today;
             }
 
-            // Calculate when maintenance should be due based on maxDuration
+            
             Calendar cal = Calendar.getInstance();
             cal.setTime(baseDate);
             cal.add(Calendar.MONTH, maxDurationMonths);
             plannedDate = cal.getTime();
 
-            // Check if overdue by time
+            
             if (plannedDate.before(today)) {
                 long daysOverdue = (today.getTime() - plannedDate.getTime()) / (1000 * 60 * 60 * 24);
-                priority += Math.min(5, (int) (daysOverdue / 30)); // +1 priority per month overdue, max 5
+                priority += Math.min(5, (int) (daysOverdue / 30)); 
                 reason.append("Overdue by ").append(daysOverdue).append(" days. ");
             } else {
-                // Calculate days until due
+                
                 long daysUntil = (plannedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
                 if (daysUntil <= 30) {
-                    priority += 2; // Due within a month
+                    priority += 2; 
                     reason.append("Due in ").append(daysUntil).append(" days. ");
                 } else if (daysUntil <= 90) {
-                    priority += 1; // Due within 3 months
+                    priority += 1; 
                     reason.append("Due in ").append(daysUntil).append(" days. ");
                 }
             }
 
-            // Check mileage threshold (assuming no previous intervention, use absolute
-            // threshold)
+            
+            
             if (currentMileage >= maxMileage) {
-                priority += 3; // Exceeded mileage threshold
+                priority += 3; 
                 reason.append("Mileage exceeded (").append(currentMileage).append("/").append(maxMileage)
                         .append(" km). ");
             } else if (currentMileage >= maxMileage * 0.9) {
-                priority += 2; // Near mileage threshold
+                priority += 2; 
                 reason.append("Near mileage limit (").append(currentMileage).append("/").append(maxMileage)
                         .append(" km). ");
             }
 
         } else {
-            // Has previous intervention - calculate from that
+            
             Date lastDate = lastIntervention.getDate();
             int lastMileage = lastIntervention.getVehicleMileage();
 
-            // Calculate due date based on last intervention + maxDuration
+            
             Calendar cal = Calendar.getInstance();
             cal.setTime(lastDate);
             cal.add(Calendar.MONTH, maxDurationMonths);
             plannedDate = cal.getTime();
 
-            // Check time-based urgency
+            
             if (plannedDate.before(today)) {
                 long daysOverdue = (today.getTime() - plannedDate.getTime()) / (1000 * 60 * 60 * 24);
-                priority += Math.min(5, (int) (daysOverdue / 30) + 2); // +1 priority per month overdue
+                priority += Math.min(5, (int) (daysOverdue / 30) + 2); 
                 reason.append("Overdue by ").append(daysOverdue).append(" days. ");
             } else {
                 long daysUntil = (plannedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
@@ -259,14 +259,14 @@ public class InterventionService {
                 }
             }
 
-            // Check mileage-based urgency
+            
             int mileageSinceLast = currentMileage - lastMileage;
             if (mileageSinceLast >= maxMileage) {
-                priority += 3; // Exceeded mileage interval
+                priority += 3; 
                 reason.append("Mileage interval exceeded (").append(mileageSinceLast)
                         .append("/").append(maxMileage).append(" km since last). ");
             } else if (mileageSinceLast >= maxMileage * 0.9) {
-                priority += 2; // Near mileage interval
+                priority += 2; 
                 reason.append("Near mileage interval (").append(mileageSinceLast)
                         .append("/").append(maxMileage).append(" km since last). ");
             } else if (mileageSinceLast >= maxMileage * 0.75) {
@@ -276,7 +276,7 @@ public class InterventionService {
             }
         }
 
-        // Only return if there's some urgency
+        
         if (priority > 0) {
             return new PlannedIntervention(vehicle, maintenanceType, plannedDate,
                     priority, reason.toString().trim());
@@ -291,7 +291,7 @@ public class InterventionService {
      * @param vehicle The vehicle to check
      * @return List of planned interventions for the vehicle
      */
-    public List<PlannedIntervention> getPlannedInterventionsForVehicle(Vehicle vehicle) {
+    /*public List<PlannedIntervention> getPlannedInterventionsForVehicle(Vehicle vehicle) {
         List<PlannedIntervention> planned = new ArrayList<>();
         List<MaintenanceType> maintenanceTypes = maintenanceTypeDAO.findAll();
         List<Intervention> vehicleInterventions = interventionDAO.findByVehicle(vehicle);
@@ -307,5 +307,5 @@ public class InterventionService {
         return planned.stream()
                 .sorted((a, b) -> Integer.compare(b.getPriority(), a.getPriority()))
                 .collect(Collectors.toList());
-    }
+    }*/
 }

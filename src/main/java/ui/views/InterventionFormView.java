@@ -13,7 +13,7 @@ import entities.*;
  */
 public class InterventionFormView extends JPanel {
 
-    // Theme colors
+    
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
     private static final Color PRIMARY_COLOR = new Color(37, 99, 235);
@@ -24,7 +24,7 @@ public class InterventionFormView extends JPanel {
     private static final Color BORDER_COLOR = new Color(226, 232, 240);
     private static final Color INPUT_BACKGROUND = new Color(248, 250, 252);
 
-    // Form components
+    
     public JComboBox<Vehicle> comboVehicle;
     public JComboBox<InterventionType> comboInterventionType;
     public JComboBox<MaintenanceType> comboMaintenanceType;
@@ -33,16 +33,16 @@ public class InterventionFormView extends JPanel {
     public JTextField txtBasePrice;
     public JTextField txtFinalPrice;
 
-    // Action buttons
+    
     public JButton btnCalculate;
     public JButton btnSave;
     public JButton btnClear;
     public JButton btnShowDiagram;
 
-    // Maintenance type panel (shown conditionally)
+    
     private JPanel maintenanceTypePanel;
 
-    // Vehicle diagram view
+    
     private VehicleDiagramView diagramView;
     private JDialog diagramDialog;
 
@@ -51,13 +51,13 @@ public class InterventionFormView extends JPanel {
         setBackground(BACKGROUND);
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        // Header
+        
         add(createHeader(), BorderLayout.NORTH);
 
-        // Main form
+        
         add(createFormPanel(), BorderLayout.CENTER);
 
-        // Initialize diagram view
+        
         diagramView = new VehicleDiagramView();
     }
 
@@ -96,27 +96,27 @@ public class InterventionFormView extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 25));
         mainPanel.setOpaque(false);
 
-        // Sections container
+        
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
         formContainer.setOpaque(false);
 
-        // Vehicle section (REQUIRED - emphasized)
+        
         formContainer.add(createVehicleSection());
         formContainer.add(Box.createVerticalStrut(20));
 
-        // Intervention type section
+        
         formContainer.add(createInterventionTypeSection());
         formContainer.add(Box.createVerticalStrut(20));
 
-        // Intervention details section
+        
         formContainer.add(createDetailsSection());
         formContainer.add(Box.createVerticalStrut(20));
 
-        // Price section
+        
         formContainer.add(createPriceSection());
 
-        // Wrapper
+        
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setOpaque(false);
         wrapper.add(formContainer, BorderLayout.NORTH);
@@ -128,7 +128,7 @@ public class InterventionFormView extends JPanel {
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Action buttons
+        
         mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
         return mainPanel;
@@ -142,12 +142,12 @@ public class InterventionFormView extends JPanel {
         section.setBackground(CARD_BACKGROUND);
         section.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createCompoundBorder(
-                        new LineBorder(WARNING_COLOR, 2, true), // Orange border for emphasis
+                        new LineBorder(WARNING_COLOR, 2, true), 
                         new LineBorder(BORDER_COLOR, 1, true)),
                 new EmptyBorder(25, 30, 25, 30)));
         section.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
 
-        // Title with required indicator
+        
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         titlePanel.setOpaque(false);
 
@@ -184,7 +184,7 @@ public class InterventionFormView extends JPanel {
         comboVehicle.setFont(new Font("SansSerif", Font.PLAIN, 14));
         styleComboBox(comboVehicle);
 
-        // Custom renderer to show vehicle info clearly
+        
         comboVehicle.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -213,7 +213,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(comboVehicle, gbc);
 
-        // Show Diagram button
+        
         btnShowDiagram = new JButton("📊 View Diagram");
         btnShowDiagram.setFont(new Font("SansSerif", Font.BOLD, 12));
         btnShowDiagram.setForeground(Color.WHITE);
@@ -240,7 +240,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 0;
         grid.add(btnShowDiagram, gbc);
 
-        // Help text
+        
         JLabel helpText = new JLabel(
                 "⚠ You must select a vehicle to register an intervention. Click 'View Diagram' to visualize maintenance areas.");
         helpText.setFont(new Font("SansSerif", Font.ITALIC, 12));
@@ -270,10 +270,10 @@ public class InterventionFormView extends JPanel {
             return;
         }
 
-        // Update diagram with vehicle data
+        
         diagramView.setVehicleData(selectedVehicle, null, null);
 
-        // Create dialog if not exists
+        
         if (diagramDialog == null) {
             Window window = SwingUtilities.getWindowAncestor(this);
             diagramDialog = new JDialog(window instanceof Frame ? (Frame) window : null,
@@ -305,7 +305,7 @@ public class InterventionFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 15, 20);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Intervention type
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -316,7 +316,7 @@ public class InterventionFormView extends JPanel {
         comboInterventionType.setFont(new Font("SansSerif", Font.PLAIN, 14));
         styleComboBox(comboInterventionType);
 
-        // Renderer to show type name
+        
         comboInterventionType.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -333,7 +333,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(comboInterventionType, gbc);
 
-        // Maintenance type (optional)
+        
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
@@ -348,7 +348,7 @@ public class InterventionFormView extends JPanel {
         comboMaintenanceType.setFont(new Font("SansSerif", Font.PLAIN, 14));
         styleComboBox(comboMaintenanceType);
 
-        // Renderer for maintenance type
+        
         comboMaintenanceType.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -391,7 +391,7 @@ public class InterventionFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 15, 30);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Intervention date
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -432,7 +432,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 1;
         grid.add(datePanel, gbc);
 
-        // Mileage
+        
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
@@ -472,7 +472,7 @@ public class InterventionFormView extends JPanel {
         gbc.insets = new Insets(0, 0, 15, 30);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Base price
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
@@ -495,7 +495,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(basePricePanel, gbc);
 
-        // Calculate button
+        
         btnCalculate = new JButton("Calculate Price");
         btnCalculate.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnCalculate.setForeground(Color.WHITE);
@@ -521,7 +521,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 0;
         grid.add(btnCalculate, gbc);
 
-        // Final price
+        
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
@@ -549,7 +549,7 @@ public class InterventionFormView extends JPanel {
         gbc.weightx = 0.5;
         grid.add(finalPricePanel, gbc);
 
-        // Explanatory note
+        
         JLabel noteLabel = new JLabel("Price is calculated based on vehicle type");
         noteLabel.setFont(new Font("SansSerif", Font.ITALIC, 11));
         noteLabel.setForeground(TEXT_SECONDARY);
@@ -582,7 +582,7 @@ public class InterventionFormView extends JPanel {
         return buttonPanel;
     }
 
-    // ===== UTILITY METHODS =====
+    
 
     /**
      * Creates a section with title and content.

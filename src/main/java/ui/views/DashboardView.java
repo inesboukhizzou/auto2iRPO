@@ -14,7 +14,7 @@ import services.InterventionService.PlannedIntervention;
  */
 public class DashboardView extends JPanel {
 
-    // Theme colors
+    
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
     private static final Color PRIMARY_COLOR = new Color(59, 130, 246);
@@ -24,7 +24,7 @@ public class DashboardView extends JPanel {
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
     private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
 
-    // Components
+    
     private DefaultTableModel tableModel;
     private JTable maintenanceTable;
 
@@ -35,10 +35,10 @@ public class DashboardView extends JPanel {
         setBackground(BACKGROUND);
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        // Header
+        
         add(createHeader(), BorderLayout.NORTH);
 
-        // Main content - only the table
+        
         add(createTablePanel(), BorderLayout.CENTER);
     }
 
@@ -49,7 +49,7 @@ public class DashboardView extends JPanel {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
-        // Title and subtitle
+        
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -81,7 +81,7 @@ public class DashboardView extends JPanel {
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(0, 0, 0, 0)));
 
-        // Table header
+        
         JPanel tableHeader = new JPanel(new BorderLayout());
         tableHeader.setBackground(CARD_BACKGROUND);
         tableHeader.setBorder(new EmptyBorder(20, 25, 15, 25));
@@ -102,7 +102,7 @@ public class DashboardView extends JPanel {
 
         tableHeader.add(titleContainer, BorderLayout.WEST);
 
-        // Table configuration
+        
         String[] columns = { "PRIORITY", "OWNER", "PHONE", "EMAIL", "VEHICLE", "INTERVENTION", "SCHEDULED DATE" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -124,10 +124,10 @@ public class DashboardView extends JPanel {
         maintenanceTable.getTableHeader().setBorder(new MatteBorder(0, 0, 1, 0, new Color(226, 232, 240)));
         maintenanceTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
 
-        // Custom renderer for priority column
+        
         maintenanceTable.getColumnModel().getColumn(0).setCellRenderer(new PriorityRenderer());
 
-        // Column widths
+        
         maintenanceTable.getColumnModel().getColumn(0).setPreferredWidth(80);
         maintenanceTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         maintenanceTable.getColumnModel().getColumn(2).setPreferredWidth(120);

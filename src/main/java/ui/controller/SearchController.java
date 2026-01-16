@@ -36,10 +36,10 @@ public class SearchController {
      * Configures event handlers.
      */
     private void initEventHandlers() {
-        // Search button
+        
         view.btnSearch.addActionListener(e -> performSearch());
 
-        // Search on Enter in fields
+        
         view.txtSearchPart1.addActionListener(e -> view.txtSearchPart2.requestFocus());
         view.txtSearchPart2.addActionListener(e -> view.txtSearchPart3.requestFocus());
         view.txtSearchPart3.addActionListener(e -> performSearch());
@@ -50,12 +50,12 @@ public class SearchController {
      */
     private void performSearch() {
         try {
-            // Get search values
+            
             String part1 = view.txtSearchPart1.getText().trim().toUpperCase();
             String part2Str = view.txtSearchPart2.getText().trim();
             String part3 = view.txtSearchPart3.getText().trim().toUpperCase();
 
-            // Validation
+            
             if (part1.isEmpty() || part2Str.isEmpty() || part3.isEmpty()) {
                 JOptionPane.showMessageDialog(view,
                         "Please enter the complete license plate.",
@@ -75,7 +75,7 @@ public class SearchController {
                 return;
             }
 
-            // Search for registration
+            
             Registration registration = registrationDAO.findByParts(part1, part2, part3);
 
             if (registration == null) {
@@ -83,7 +83,7 @@ public class SearchController {
                 return;
             }
 
-            // Search for vehicle
+            
             Vehicle vehicle = vehicleDAO.findByRegistration(registration);
 
             if (vehicle == null) {
@@ -91,10 +91,10 @@ public class SearchController {
                 return;
             }
 
-            // Get intervention history
+            
             List<Intervention> history = interventionDAO.findByVehicle(vehicle);
 
-            // Display results
+            
             view.displayVehicleData(vehicle, history);
 
         } catch (Exception e) {

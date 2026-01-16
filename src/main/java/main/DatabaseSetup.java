@@ -18,12 +18,12 @@ public class DatabaseSetup {
         System.out.println("=== Auto2i Database Setup ===\n");
 
         try {
-            // Initialize JPA (creates tables based on entities)
+            
             System.out.println("Initializing database connection...");
             JPAUtil.getEntityManagerFactory();
             System.out.println("✓ Database connection established\n");
 
-            // Create sample data
+            
             createSampleData();
 
             System.out.println("\n=== Database setup completed successfully! ===");
@@ -48,7 +48,7 @@ public class DatabaseSetup {
         PricingDAO pricingDAO = new PricingDAO();
         InterventionDAO interventionDAO = new InterventionDAO();
 
-        // ============ OWNERS ============
+        
         System.out.println("Creating owners...");
 
         Owner owner1 = ownerDAO.findOrCreate("Jean", "Dupont", "0612345678", "jean.dupont@email.com");
@@ -59,7 +59,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Owners created: 5");
 
-        // ============ VEHICLE TYPES ============
+        
         System.out.println("Creating vehicle types...");
 
         VehicleType vt1 = createVehicleTypeIfNotExists(vehicleTypeDAO,
@@ -75,7 +75,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Vehicle types created: 5");
 
-        // ============ MAINTENANCE TYPES ============
+        
         System.out.println("Creating maintenance types...");
 
         MaintenanceType mt1 = createMaintenanceTypeIfNotExists(maintenanceTypeDAO,
@@ -93,7 +93,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Maintenance types created: 6");
 
-        // ============ REPAIR TYPES ============
+        
         System.out.println("Creating repair types...");
 
         RepairType rt1 = createRepairTypeIfNotExists(repairTypeDAO, "Door Replacement");
@@ -104,7 +104,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Repair types created: 5");
 
-        // ============ PARTS ============
+        
         System.out.println("Creating vehicle parts...");
 
         createPartIfNotExists(partDAO, mt1, "Engine");
@@ -127,7 +127,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Parts created: 17");
 
-        // ============ REGISTRATIONS & VEHICLES ============
+        
         System.out.println("Creating vehicles...");
 
         Vehicle v1 = createVehicleIfNotExists(vehicleDAO, registrationDAO,
@@ -143,12 +143,12 @@ public class DatabaseSetup {
 
         System.out.println("✓ Vehicles created: 5");
 
-        // ============ PRICING ============
+        
         System.out.println("Creating pricing rules...");
 
         createPricingIfNotExists(pricingDAO, mt1, vt1, 89.90);
         createPricingIfNotExists(pricingDAO, mt1, vt2, 99.90);
-        createPricingIfNotExists(pricingDAO, mt1, vt3, 0.00); // Electric - no oil change
+        createPricingIfNotExists(pricingDAO, mt1, vt3, 0.00); 
         createPricingIfNotExists(pricingDAO, mt1, vt4, 94.90);
         createPricingIfNotExists(pricingDAO, mt1, vt5, 79.90);
         createPricingIfNotExists(pricingDAO, mt2, vt1, 249.00);
@@ -162,7 +162,7 @@ public class DatabaseSetup {
 
         System.out.println("✓ Pricing rules created: 13+");
 
-        // ============ SAMPLE INTERVENTIONS ============
+        
         System.out.println("Creating sample interventions...");
 
         if (v1 != null) {
@@ -187,7 +187,7 @@ public class DatabaseSetup {
         System.out.println("✓ Sample interventions created");
     }
 
-    // ============ HELPER METHODS ============
+    
 
     private static VehicleType createVehicleTypeIfNotExists(VehicleTypeDAO dao,
             String brand, String model, String fuelType, String gearbox,
@@ -197,7 +197,7 @@ public class DatabaseSetup {
             dao.create(vt);
             return vt;
         } catch (Exception e) {
-            // Already exists, find it
+            
             return dao.findAll().stream()
                     .filter(v -> v.getBrand().equals(brand) && v.getModel().equals(model))
                     .findFirst().orElse(null);
@@ -234,7 +234,7 @@ public class DatabaseSetup {
             Part part = new Part(type, name);
             dao.create(part);
         } catch (Exception e) {
-            // Already exists
+            
         }
     }
 
@@ -252,7 +252,7 @@ public class DatabaseSetup {
             vehicleDAO.create(vehicle);
             return vehicle;
         } catch (Exception e) {
-            // Already exists
+            
             Registration reg = registrationDAO.findByParts(p1, p2, p3);
             if (reg != null) {
                 return vehicleDAO.findByRegistration(reg);
@@ -267,7 +267,7 @@ public class DatabaseSetup {
             Pricing pricing = new Pricing(price, type, vehicleType);
             dao.create(pricing);
         } catch (Exception e) {
-            // Already exists
+            
         }
     }
 
@@ -282,7 +282,7 @@ public class DatabaseSetup {
             intervention.setInterventionType(type);
             dao.save(intervention);
         } catch (Exception e) {
-            // Already exists
+            
         }
     }
 }

@@ -20,7 +20,7 @@ public class PriceService {
 
     private final PricingDAO pricingDAO = new PricingDAO();
 
-    // Default base price if no pricing rule is found
+    
     private static final double DEFAULT_BASE_PRICE = 50.00;
 
     /**
@@ -38,12 +38,12 @@ public class PriceService {
         InterventionType interventionType = intervention.getInterventionType();
         VehicleType vehicleType = null;
 
-        // Get vehicle type from the intervention's vehicle
+        
         if (intervention.getVehicle() != null && intervention.getVehicle().getVehicleType() != null) {
             vehicleType = intervention.getVehicle().getVehicleType();
         }
 
-        // Try to find a specific pricing rule
+        
         Pricing pricing = pricingDAO.findByInterventionTypeAndVehicleType(interventionType, vehicleType);
 
         if (pricing != null) {
@@ -56,7 +56,7 @@ public class PriceService {
             return pricing.getPrice();
         }
 
-        // No specific pricing found - use fallback calculation
+        
         return calculateFallbackPrice(intervention, interventionType, vehicleType);
     }
 
@@ -67,38 +67,38 @@ public class PriceService {
     private double calculateFallbackPrice(Intervention intervention,
             InterventionType interventionType,
             VehicleType vehicleType) {
-        // Use provided base price or default
+        
         double basePrice = intervention.getPrice() > 0 ? intervention.getPrice() : DEFAULT_BASE_PRICE;
 
-        // Calculate multiplier based on vehicle characteristics
+        
         double multiplier = 1.0;
 
         if (vehicleType != null) {
-            // Power-based multiplier (more powerful = more expensive)
+            
             int power = vehicleType.getPower();
             if (power > 200) {
-                multiplier += 0.5; // High performance
+                multiplier += 0.5; 
             } else if (power > 150) {
-                multiplier += 0.3; // Sports/Premium
+                multiplier += 0.3; 
             } else if (power > 100) {
-                multiplier += 0.1; // Standard
+                multiplier += 0.1; 
             }
-            // Low power vehicles get no extra multiplier
+            
 
-            // Fuel type multiplier
+            
             String fuelType = vehicleType.getFuelType();
             if (fuelType != null) {
                 switch (fuelType.toLowerCase()) {
                     case "electric":
-                        multiplier += 0.2; // Electric cars often need specialized tools
+                        multiplier += 0.2; 
                         break;
                     case "hybrid":
-                        multiplier += 0.15; // Hybrid complexity
+                        multiplier += 0.15; 
                         break;
                     case "diesel":
-                        multiplier += 0.05; // Slightly more complex than gasoline
+                        multiplier += 0.05; 
                         break;
-                    // "gasoline" and others: no extra
+                    
                 }
             }
         }

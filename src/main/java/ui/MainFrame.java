@@ -13,24 +13,24 @@ import ui.views.*;
  */
 public class MainFrame extends JFrame {
 
-    // Theme colors
-    private static final Color SIDEBAR_COLOR = new Color(30, 41, 59); // Dark blue
-    private static final Color SIDEBAR_HOVER = new Color(51, 65, 85); // Blue hover
-    private static final Color SIDEBAR_ACTIVE = new Color(59, 130, 246); // Accent blue
-    private static final Color BACKGROUND_COLOR = new Color(241, 245, 249); // Light gray
-    private static final Color TEXT_COLOR = new Color(226, 232, 240); // Light text
+    
+    private static final Color SIDEBAR_COLOR = new Color(30, 41, 59); 
+    private static final Color SIDEBAR_HOVER = new Color(51, 65, 85); 
+    private static final Color SIDEBAR_ACTIVE = new Color(59, 130, 246); 
+    private static final Color BACKGROUND_COLOR = new Color(241, 245, 249); 
+    private static final Color TEXT_COLOR = new Color(226, 232, 240); 
 
-    // Layout and main panel
+    
     private CardLayout cardLayout;
     private JPanel mainContent;
 
-    // Application views
+    
     private DashboardView dashboardView;
     private VehicleFormView vehicleFormView;
     private SearchVehicleView searchVehicleView;
     private InterventionFormView interventionFormView;
 
-    // Navigation buttons (to manage active state)
+    
     private JButton btnDashboard;
     private JButton btnVehicles;
     private JButton btnSearch;
@@ -45,21 +45,21 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Set application icon
+        
         setApplicationIcon();
 
-        // Initialize views
+        
         initViews();
 
-        // Create sidebar
+        
         add(createSidebar(), BorderLayout.WEST);
 
-        // Create main content
+        
         cardLayout = new CardLayout();
         mainContent = new JPanel(cardLayout);
         mainContent.setBackground(BACKGROUND_COLOR);
 
-        // Add views to CardLayout
+        
         mainContent.add(dashboardView, "DASHBOARD");
         mainContent.add(vehicleFormView, "VEHICLES");
         mainContent.add(searchVehicleView, "SEARCH");
@@ -67,7 +67,7 @@ public class MainFrame extends JFrame {
 
         add(mainContent, BorderLayout.CENTER);
 
-        // Default view
+        
         setActiveButton(btnDashboard);
         cardLayout.show(mainContent, "DASHBOARD");
     }
@@ -104,14 +104,14 @@ public class MainFrame extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // Logo and title
+        
         JPanel logoPanel = createLogoPanel();
         sidebar.add(logoPanel);
 
-        // Separator
+        
         sidebar.add(Box.createVerticalStrut(30));
 
-        // Navigation menu label - LEFT ALIGNED
+        
         JPanel menuLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         menuLabelPanel.setBackground(SIDEBAR_COLOR);
         menuLabelPanel.setMaximumSize(new Dimension(280, 30));
@@ -124,7 +124,7 @@ public class MainFrame extends JFrame {
         sidebar.add(menuLabelPanel);
         sidebar.add(Box.createVerticalStrut(10));
 
-        // Navigation buttons
+        
         btnDashboard = createNavButton("📊  Dashboard", "DASHBOARD");
         btnVehicles = createNavButton("🚗  Vehicles", "VEHICLES");
         btnSearch = createNavButton("🔍  Search", "SEARCH");
@@ -138,10 +138,10 @@ public class MainFrame extends JFrame {
         sidebar.add(Box.createVerticalStrut(5));
         sidebar.add(btnInterventions);
 
-        // Flexible 🛞
+        
         sidebar.add(Box.createVerticalGlue());
 
-        // Footer
+        
         JPanel footer = createFooter();
         sidebar.add(footer);
 
@@ -159,15 +159,15 @@ public class MainFrame extends JFrame {
         logoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         logoPanel.setMaximumSize(new Dimension(280, 120));
 
-        // Try to load the logo image
+        
         JLabel logoImage = new JLabel();
         try {
             ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoV2.png"));
-            // Scale the image to fit
+            
             Image scaledImage = icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
             logoImage.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
-            // Fallback to text emoji if image not found
+            
             logoImage.setText("🚗");
             logoImage.setFont(new Font("SansSerif", Font.PLAIN, 36));
             logoImage.setForeground(Color.WHITE);
@@ -211,7 +211,7 @@ public class MainFrame extends JFrame {
         btn.setBorder(new EmptyBorder(0, 25, 0, 0));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Hover effects
+        
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -228,7 +228,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        // Click action
+        
         btn.addActionListener(e -> {
             setActiveButton(btn);
             cardLayout.show(mainContent, cardName);
@@ -241,13 +241,13 @@ public class MainFrame extends JFrame {
      * Sets the active button and updates styles.
      */
     private void setActiveButton(JButton btn) {
-        // Reset previous active button
+        
         if (activeButton != null) {
             activeButton.setBackground(SIDEBAR_COLOR);
             activeButton.setForeground(TEXT_COLOR);
         }
 
-        // Activate new button
+        
         activeButton = btn;
         activeButton.setBackground(SIDEBAR_ACTIVE);
         activeButton.setForeground(Color.WHITE);
@@ -280,7 +280,7 @@ public class MainFrame extends JFrame {
         return footer;
     }
 
-    // ===== VIEW GETTERS =====
+    
 
     public DashboardView getDashboardView() {
         return dashboardView;

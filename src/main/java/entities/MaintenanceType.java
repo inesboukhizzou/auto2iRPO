@@ -27,7 +27,7 @@ public class MaintenanceType extends InterventionType {
         this.maxDuration = maxDuration;
     }
 
-    // Getters and Setters
+    
 
     public int getMaxMileage() {
         return maxMileage;

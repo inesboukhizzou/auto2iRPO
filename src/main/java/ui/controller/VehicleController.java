@@ -44,7 +44,7 @@ public class VehicleController {
      * Initializes ComboBox data.
      */
     private void initData() {
-        // Load owners
+        
         try {
             List<Owner> owners = ownerDAO.findAll();
             view.comboOwner.removeAllItems();
@@ -55,7 +55,7 @@ public class VehicleController {
             System.err.println("Error loading owners: " + e.getMessage());
         }
 
-        // Load vehicle types
+        
         try {
             List<VehicleType> types = vehicleTypeDAO.findAll();
             view.comboVehicleType.removeAllItems();
@@ -71,18 +71,18 @@ public class VehicleController {
      * Configures event handlers.
      */
     private void initEventHandlers() {
-        // Save button
+        
         view.btnSave.addActionListener(e -> saveVehicle());
 
-        // Clear button
+        
         view.btnClear.addActionListener(e -> view.clearForm());
 
-        // New owner button
+        
         view.btnAddOwner.addActionListener(e -> createNewOwner());
 
-        // Note: btnAddVehicleType toggles the form visibility in the view
-        // We need to handle saving the new vehicle type when the main save is clicked
-        // or add a separate save button for vehicle type
+        
+        
+        
     }
 
     /**
@@ -90,23 +90,23 @@ public class VehicleController {
      */
     private void saveVehicle() {
         try {
-            // First, check if a new vehicle type needs to be created
+            
             if (view.isVehicleTypeFormVisible()) {
                 VehicleType newType = createNewVehicleType();
                 if (newType == null) {
-                    return; // Validation failed
+                    return; 
                 }
                 view.comboVehicleType.addItem(newType);
                 view.comboVehicleType.setSelectedItem(newType);
                 view.hideVehicleTypeForm();
             }
 
-            // Validate fields
+            
             if (!validateFields()) {
                 return;
             }
 
-            // Get values
+            
             Owner selectedOwner = (Owner) view.comboOwner.getSelectedItem();
             VehicleType selectedType = (VehicleType) view.comboVehicleType.getSelectedItem();
 
@@ -119,16 +119,16 @@ public class VehicleController {
             Date dateOfFirstReg;
             String dateText = view.txtDateRegistration.getText().trim();
             if (dateText.equals("yyyy-MM-dd") || dateText.isEmpty()) {
-                dateOfFirstReg = new Date(); // Today by default
+                dateOfFirstReg = new Date(); 
             } else {
                 dateOfFirstReg = dateFormat.parse(dateText);
             }
 
-            // Create registration
+            
             Registration registration = new Registration(part1, part2, part3);
             registrationDAO.create(registration);
 
-            // Create vehicle
+            
             Vehicle vehicle = new Vehicle();
             vehicle.setOwner(selectedOwner);
             vehicle.setVehicleType(selectedType);
@@ -138,14 +138,14 @@ public class VehicleController {
 
             vehicleDAO.create(vehicle);
 
-            // Success message
+            
             String plateNumber = part1 + "-" + part2 + "-" + part3;
             JOptionPane.showMessageDialog(view,
                     "Vehicle " + plateNumber + " registered successfully!",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Clear the form
+            
             view.clearForm();
 
         } catch (NumberFormatException e) {
@@ -180,7 +180,7 @@ public class VehicleController {
             int seats = Integer.parseInt(view.txtSeats.getText().trim());
             int power = Integer.parseInt(view.txtPower.getText().trim());
 
-            // Validation
+            
             if (brand.isEmpty() || model.isEmpty()) {
                 JOptionPane.showMessageDialog(view,
                         "Brand and Model are required for a new vehicle type.",
@@ -189,7 +189,7 @@ public class VehicleController {
                 return null;
             }
 
-            // Create and save the vehicle type
+            
             VehicleType newType = new VehicleType(brand, model, fuelType, gearbox, doors, seats, power);
             vehicleTypeDAO.create(newType);
 
@@ -220,7 +220,7 @@ public class VehicleController {
      * Validates form fields.
      */
     private boolean validateFields() {
-        // Check owner
+        
         if (view.comboOwner.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(view,
                     "Please select or create an owner.",
@@ -229,7 +229,7 @@ public class VehicleController {
             return false;
         }
 
-        // Check vehicle type
+        
         if (view.comboVehicleType.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(view,
                     "Please select or create a vehicle type.",
@@ -238,7 +238,7 @@ public class VehicleController {
             return false;
         }
 
-        // Check license plate
+        
         String part1 = view.txtRegPart1.getText().trim();
         String part2 = view.txtRegPart2.getText().trim();
         String part3 = view.txtRegPart3.getText().trim();
@@ -275,7 +275,7 @@ public class VehicleController {
             return false;
         }
 
-        // Check mileage
+        
         if (view.txtMileage.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(view,
                     "Please enter the current mileage.",
@@ -291,7 +291,7 @@ public class VehicleController {
      * Creates a new owner via a dialog.
      */
     private void createNewOwner() {
-        // Custom input panel
+        
         JPanel panel = new JPanel(new java.awt.GridLayout(4, 2, 10, 10));
 
         JTextField txtFirstName = new JTextField();
@@ -319,7 +319,7 @@ public class VehicleController {
             String phone = txtPhone.getText().trim();
             String email = txtEmail.getText().trim();
 
-            // Validation
+            
             if (firstName.isEmpty() || lastName.isEmpty()) {
                 JOptionPane.showMessageDialog(view,
                         "First name and last name are required.",
@@ -329,11 +329,11 @@ public class VehicleController {
             }
 
             try {
-                // Create owner
+                
                 Owner newOwner = new Owner(firstName, lastName, phone, email);
                 ownerDAO.create(newOwner);
 
-                // Add to ComboBox and select
+                
                 view.comboOwner.addItem(newOwner);
                 view.comboOwner.setSelectedItem(newOwner);
 

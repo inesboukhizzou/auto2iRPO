@@ -15,7 +15,7 @@ import entities.Vehicle;
  */
 public class SearchVehicleView extends JPanel {
 
-    // Theme colors
+    
     private static final Color BACKGROUND = new Color(241, 245, 249);
     private static final Color CARD_BACKGROUND = Color.WHITE;
     private static final Color PRIMARY_COLOR = new Color(59, 130, 246);
@@ -25,13 +25,13 @@ public class SearchVehicleView extends JPanel {
     private static final Color INPUT_BACKGROUND = new Color(248, 250, 252);
     private static final Color SUCCESS_COLOR = new Color(34, 197, 94);
 
-    // Search components
+    
     public JTextField txtSearchPart1;
     public JTextField txtSearchPart2;
     public JTextField txtSearchPart3;
     public JButton btnSearch;
 
-    // Details display
+    
     private JPanel vehicleDetailsPanel;
     private JLabel lblOwnerName;
     private JLabel lblOwnerPhone;
@@ -43,7 +43,7 @@ public class SearchVehicleView extends JPanel {
     private JLabel lblVehicleMileage;
     private JLabel lblVehicleDate;
 
-    // History table
+    
     private DefaultTableModel tableModel;
     private JTable historyTable;
 
@@ -54,10 +54,10 @@ public class SearchVehicleView extends JPanel {
         setBackground(BACKGROUND);
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        // Header
+        
         add(createHeader(), BorderLayout.NORTH);
 
-        // Main content
+        
         add(createMainContent(), BorderLayout.CENTER);
     }
 
@@ -96,17 +96,17 @@ public class SearchVehicleView extends JPanel {
         JPanel content = new JPanel(new BorderLayout(0, 20));
         content.setOpaque(false);
 
-        // Search bar
+        
         content.add(createSearchPanel(), BorderLayout.NORTH);
 
-        // Results area
+        
         JPanel resultsPanel = new JPanel(new BorderLayout(0, 20));
         resultsPanel.setOpaque(false);
 
-        // Vehicle details
+        
         resultsPanel.add(createVehicleDetailsPanel(), BorderLayout.NORTH);
 
-        // Intervention history
+        
         resultsPanel.add(createHistoryPanel(), BorderLayout.CENTER);
 
         content.add(resultsPanel, BorderLayout.CENTER);
@@ -127,7 +127,7 @@ public class SearchVehicleView extends JPanel {
         JLabel searchIcon = new JLabel("🔍");
         searchIcon.setFont(new Font("SansSerif", Font.PLAIN, 24));
 
-        // Input panel
+        
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         inputPanel.setOpaque(false);
 
@@ -160,7 +160,7 @@ public class SearchVehicleView extends JPanel {
         inputPanel.add(dash2);
         inputPanel.add(txtSearchPart3);
 
-        // Search button
+        
         btnSearch = new JButton("Search");
         btnSearch.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnSearch.setForeground(Color.WHITE);
@@ -215,7 +215,7 @@ public class SearchVehicleView extends JPanel {
                 new EmptyBorder(25, 30, 25, 30)));
         vehicleDetailsPanel.setVisible(false);
 
-        // Header
+        
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
 
@@ -225,12 +225,12 @@ public class SearchVehicleView extends JPanel {
 
         headerPanel.add(detailsTitle, BorderLayout.WEST);
 
-        // Content
+        
         JPanel contentPanel = new JPanel(new GridLayout(1, 2, 40, 0));
         contentPanel.setOpaque(false);
         contentPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        // Owner section
+        
         JPanel ownerSection = new JPanel();
         ownerSection.setLayout(new BoxLayout(ownerSection, BoxLayout.Y_AXIS));
         ownerSection.setOpaque(false);
@@ -249,7 +249,7 @@ public class SearchVehicleView extends JPanel {
         ownerSection.add(createDetailRow("Phone:", lblOwnerPhone));
         ownerSection.add(createDetailRow("Email:", lblOwnerEmail));
 
-        // Vehicle section
+        
         JPanel vehicleSection = new JPanel();
         vehicleSection.setLayout(new BoxLayout(vehicleSection, BoxLayout.Y_AXIS));
         vehicleSection.setOpaque(false);
@@ -321,7 +321,7 @@ public class SearchVehicleView extends JPanel {
                 new LineBorder(BORDER_COLOR, 1, true),
                 new EmptyBorder(0, 0, 0, 0)));
 
-        // Header
+        
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(CARD_BACKGROUND);
         headerPanel.setBorder(new EmptyBorder(20, 25, 15, 25));
@@ -332,7 +332,7 @@ public class SearchVehicleView extends JPanel {
 
         headerPanel.add(historyTitle, BorderLayout.WEST);
 
-        // Table
+        
         String[] columns = { "ID", "DATE", "INTERVENTION TYPE", "MILEAGE", "PRICE (€)" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -354,7 +354,7 @@ public class SearchVehicleView extends JPanel {
         historyTable.getTableHeader().setBorder(new MatteBorder(0, 0, 1, 0, BORDER_COLOR));
         historyTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
 
-        // Column widths
+        
         historyTable.getColumnModel().getColumn(0).setPreferredWidth(60);
         historyTable.getColumnModel().getColumn(1).setPreferredWidth(120);
         historyTable.getColumnModel().getColumn(2).setPreferredWidth(250);
@@ -378,7 +378,7 @@ public class SearchVehicleView extends JPanel {
         if (vehicle != null) {
             vehicleDetailsPanel.setVisible(true);
 
-            // Owner
+            
             if (vehicle.getOwner() != null) {
                 lblOwnerName.setText(vehicle.getOwner().getFirstName() + " " + vehicle.getOwner().getLastName());
                 lblOwnerPhone.setText(
@@ -386,7 +386,7 @@ public class SearchVehicleView extends JPanel {
                 lblOwnerEmail.setText(vehicle.getOwner().getEmail() != null ? vehicle.getOwner().getEmail() : "N/A");
             }
 
-            // Vehicle
+            
             if (vehicle.getVehicleType() != null) {
                 lblVehicleBrand.setText(vehicle.getVehicleType().getBrand());
                 lblVehicleModel.setText(vehicle.getVehicleType().getModel());
@@ -404,7 +404,7 @@ public class SearchVehicleView extends JPanel {
                     ? dateFormat.format(vehicle.getDateOfFirstRegistration())
                     : "N/A");
 
-            // History
+            
             tableModel.setRowCount(0);
             if (history != null) {
                 for (Intervention i : history) {

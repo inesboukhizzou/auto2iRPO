@@ -30,7 +30,7 @@ public class Registration {
         this.part3 = part3;
 
     }
-    // Getters and setters
+    
 
     public Long getId() {
         return id;

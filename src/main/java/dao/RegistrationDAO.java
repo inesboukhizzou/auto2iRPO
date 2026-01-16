@@ -21,7 +21,7 @@ public class RegistrationDAO {
      *                                  already exists
      */
     public void create(Registration registration) {
-        // Check for duplicates first
+        
         if (existsByParts(registration.getPart1(), registration.getPart2(), registration.getPart3())) {
             throw new IllegalArgumentException(
                     "A registration with license plate " +

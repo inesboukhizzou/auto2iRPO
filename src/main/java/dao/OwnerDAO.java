@@ -22,7 +22,7 @@ public class OwnerDAO {
      *                                  already exists
      */
     public void create(Owner owner) {
-        // Check for duplicates
+        
         if (existsByNameAndPhone(owner.getFirstName(), owner.getLastName(), owner.getPhoneNumber())) {
             throw new IllegalArgumentException(
                     "An owner with the name " + owner.getFirstName() + " " + owner.getLastName() +

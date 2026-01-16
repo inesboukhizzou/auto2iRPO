@@ -26,11 +26,10 @@ public class Owner {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vehicle> vehicles = new ArrayList<>();
 
-    // Constructors
+    
     public Owner() {
     }
-
-    // if we want to add a new client without necessarily adding their contact info
+    
     public Owner(String firstName, String lastName,String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,7 +45,7 @@ public class Owner {
         this.vehicles = vehicles;
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }
@@ -95,19 +94,19 @@ public class Owner {
         this.vehicles = vehicles;
     }
 
-    // Helper method to add a vehicle
+    
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
         vehicle.setOwner(this);
     }
 
-    // Helper method to remove a vehicle
+    
     public void removeVehicle(Vehicle vehicle) {
         vehicles.remove(vehicle);
         vehicle.setOwner(null);
     }
 
-    // toString
+    
 
     @Override
     public String toString() {

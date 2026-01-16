@@ -11,12 +11,12 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ManyToOne relationship: multiple vehicles can belong to one owner
+    
     @ManyToOne
     @JoinColumn(name = "ownerId", nullable = false)
     private Owner owner;
 
-    // ManyToOne relationship: multiple vehicles can have the same type
+    
     @ManyToOne
     @JoinColumn(name = "vehicleTypeId", nullable = false)
     private VehicleType vehicleType;
@@ -45,7 +45,7 @@ public class Vehicle {
         this.lastMileage = lastMileage;
     }
 
-    // Getters and Setters
+    
 
     public Long getId() {
         return id;
@@ -100,7 +100,7 @@ public class Vehicle {
         intervention.setVehicle(this);
     }
 
-    // Helper method to remove an intervention
+    
     public void removeIntervention(Intervention intervention) {
         interventions.remove(intervention);
         intervention.setVehicle(null);
@@ -114,7 +114,7 @@ public class Vehicle {
         this.registration = registration;
     }
 
-    // toString
+    
 
     @Override
     public String toString() {

@@ -26,7 +26,7 @@ public class InterventionDAO {
      *                                  type exists on the same date
      */
     public void save(Intervention intervention) {
-        // Check for duplicates (same vehicle + same intervention type + same date)
+
         if (existsByVehicleTypeAndDate(intervention.getVehicle(),
                 intervention.getInterventionType(),
                 intervention.getDate())) {
@@ -38,7 +38,7 @@ public class InterventionDAO {
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
-            // Reattach detached entities to the persistence context
+
             if (intervention.getVehicle() != null && intervention.getVehicle().getId() != null) {
                 Vehicle managedVehicle = em.find(Vehicle.class, intervention.getVehicle().getId());
                 intervention.setVehicle(managedVehicle);
@@ -75,7 +75,6 @@ public class InterventionDAO {
             return false;
         }
 
-        // Get start and end of the day
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -206,7 +205,7 @@ public class InterventionDAO {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
             return em.createQuery(
-                    "SELECT i FROM Intervention i",
+                    "SELECT i FROM Intervention i LEFT JOIN FETCH i.vehicle LEFT JOIN FETCH i.interventionType",
                     Intervention.class).getResultList();
         } finally {
             em.close();
@@ -217,7 +216,7 @@ public class InterventionDAO {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
             return em.createQuery(
-                    "SELECT i FROM Intervention i WHERE i.vehicle = :vehicle ORDER BY i.date DESC",
+                    "SELECT i FROM Intervention i LEFT JOIN FETCH i.interventionType WHERE i.vehicle = :vehicle ORDER BY i.date DESC",
                     Intervention.class)
                     .setParameter("vehicle", vehicle)
                     .getResultList();
